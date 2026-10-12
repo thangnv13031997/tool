@@ -26,8 +26,9 @@ STYLES = {
     'chibi': dict(thigh=12.0, shin=11.0, torso=25.0, upper=12.5, fore=11.5, head_r=18.0,
                   arm_w=8.4, leg_w=8.8, wt=14.0, wb=14.3, ears=True, ink=0.65, shoe=(5.4, 4.0)),
 }
-STYLE_ALIASES = {'stickman': 'stick', 'thin': 'stick', 'classic': 'stick',
-                 'mascot': 'chibi', 'chunky': 'chibi', 'cute': 'chibi', 'relatable': 'chibi'}
+STYLES['mascot'] = dict(STYLES['stick'])   # drawn by engine.mascot (vector parts + resvg); stick dims only as fallback
+STYLE_ALIASES = {'stickman': 'stick', 'thin': 'stick', 'classic': 'stick', 'mascot2': 'mascot', 'vector': 'mascot',
+                 'chunky': 'chibi', 'cute': 'chibi', 'relatable': 'chibi'}
 DEFAULT_STYLE = 'chibi'   # people; entities (ghosts, shadows...) stay 'stick' so they read as wrong
 
 
@@ -242,6 +243,7 @@ TYPES = ['person', 'driver', 'shadow', 'silhouette', 'raincoat_man', 'pale_man',
 class Look:
     def __init__(self, spec=None):
         spec = spec or {}
+        self.spec = dict(spec)
         self.name = spec.get('name', 'Someone')
         self.type = spec.get('type', 'person')
         self.age = spec.get('age', 'adult')
@@ -263,6 +265,8 @@ class Look:
         self.style = style
         self.d = STYLES[style]
         self.head_r = self.d['head_r'] * (1.16 if self.age == 'kid' else 1.0)
+        if style == 'mascot':
+            self.head_r = 18.2
         self.eye_color = hex_rgba(spec.get('eye_color', '#F5F1E8'))
         if self.age == 'elder' and spec.get('hair_color') is None:
             self.hair_color = hex_rgba('#A8A8A8')
@@ -398,6 +402,9 @@ _HEAD_CACHE = {}
 
 def head_height(look, pose):
     """Head centre height above the ground in figure units (u, before look.scale). Used for camera framing."""
+    if look.style == 'mascot':
+        from .mascot import render as MR
+        return MR.head_height_units(look) * float(look.spec.get('size', 1.0))
     key = (look.style, look.head_r, pose)
     if key not in _HEAD_CACHE:
         ex = POSES[pose][2]

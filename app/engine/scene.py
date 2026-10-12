@@ -58,6 +58,7 @@ class SceneRenderer:
         self._rain = {}
         self.cur_key = None
         self.cur = None
+        self.mascot = None
 
     # ------------------------------------------------------------ per scene setup
     def _scene_key(self, sc):
@@ -117,6 +118,17 @@ class SceneRenderer:
         v = (img, ax, ay)
         self.fig_cache.put(key, v)
         return v
+
+    def _mascot_tile(self, c, pose, facing, emo, mouth, blink, t, scale):
+        from .mascot import render as MR
+        if self.mascot is None:
+            self.mascot = MR.Renderer()
+        ppu = self.u * scale * float(c['look'].spec.get('size', 1.0)) * 104.0 / MR.CHAR_UNITS
+        prev = None
+        p = c.get('prev')
+        if p and t < BLEND_T and p['pose'] != pose:
+            prev = (p['pose'], p['t'], ease_in_out(t / BLEND_T))
+        return self.mascot.tile(c['look'], pose, t, facing, emo, mouth, blink, ppu, prev)
 
     def _tint(self, img, rgb):
         q = tuple(max(0, min(255, int(round(c * 20)) * 255 // 20)) for c in rgb)
@@ -337,7 +349,10 @@ class SceneRenderer:
                 continue
             x, pose, ang, facing, emo, mouth, blink, = self.char_state(sc, c, t, i)
             scale = c.get('scale', 1.0)
-            img, ax, ay = self._fig_tile(c['look'], pose, ang, facing, emo, mouth, blink, t, scale)
+            if c['look'].style == 'mascot':
+                img, ax, ay = self._mascot_tile(c, pose, facing, emo, mouth, blink, t, scale)
+            else:
+                img, ax, ay = self._fig_tile(c['look'], pose, ang, facing, emo, mouth, blink, t, scale)
             if not c['look'].entity or c['look'].type in ('raincoat_man', 'pale_man', 'mimic', 'child_ghost'):
                 rgb = L['light'].sample(x, c.get('y', L['ground']) - 0.25 * scale, lvl)
                 lo = c.get('min_light', 0.62 if not c['look'].entity else 0.4)

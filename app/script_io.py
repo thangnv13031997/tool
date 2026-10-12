@@ -449,7 +449,31 @@ def normalize(data, cfg):
             issues.append(Issue('Hình đứng yên', '3 cảnh liền camera static, nên thêm chuyển động', b['index']))
     if not out['scenes']:
         issues.append(Issue('Kịch bản trống', 'không có cảnh nào'))
+    if any(v['look'].style == 'mascot' for v in out['cast'].values()):
+        issues += _mascot_checks(out)
     return out, issues
+
+
+def _mascot_checks(out):
+    """Mascot style: every pose must map to a reviewed action; report substitutes and missing renderer."""
+    from engine.mascot import actions as MA
+    found = []
+    try:
+        import resvg_py  # noqa: F401
+    except ImportError:
+        found.append(Issue('Thiếu thư viện', 'kiểu vẽ mascot cần resvg-py: chạy lại setup.bat (pip install resvg-py)'))
+    for sc in out['scenes']:
+        for c in sc['chars']:
+            if c['look'].style != 'mascot':
+                continue
+            for pn in (c['pose'], c.get('move_pose')):
+                if not pn:
+                    continue
+                if pn in MA.SUBSTITUTE:
+                    found.append(Issue('Động tác thay thế', f'{c["look"].name}: "{pn}" chưa có ở góc chính diện, dùng {MA.SUBSTITUTE[pn]}', sc['index']))
+                elif pn not in MA.ACTIONS:
+                    found.append(Issue('Động tác chưa có', f'{c["look"].name}: "{pn}" chưa có trong thư viện mascot, dùng idle', sc['index']))
+    return found
 
 
 # ------------------------------------------------------------------ retention report (after timing)
