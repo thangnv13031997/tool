@@ -18,6 +18,24 @@ ARM_W = 4.0        # sleeve thickness (u)
 LEG_W = 4.6
 LINE_DARK = hex_rgba('#0E1116')
 
+# Drawing styles. 'stick' = thin stick limbs, small head (the original look).
+# 'chibi' = big round head with ears, chunky outlined body, short legs (Relatable-style mascot).
+STYLES = {
+    'stick': dict(thigh=THIGH, shin=SHIN, torso=TORSO, upper=UPPER, fore=FORE, head_r=HEAD_R,
+                  arm_w=ARM_W, leg_w=LEG_W, wt=8.0, wb=6.8, ears=False, ink=0.0, shoe=(3.8, 1.9)),
+    'chibi': dict(thigh=12.5, shin=12.0, torso=25.0, upper=12.5, fore=11.0, head_r=18.0,
+                  arm_w=7.6, leg_w=9.0, wt=12.0, wb=11.6, ears=True, ink=1.0, shoe=(5.6, 3.0)),
+}
+STYLE_ALIASES = {'stickman': 'stick', 'thin': 'stick', 'classic': 'stick',
+                 'mascot': 'chibi', 'chunky': 'chibi', 'cute': 'chibi', 'relatable': 'chibi'}
+DEFAULT_STYLE = 'chibi'   # people; entities (ghosts, shadows...) stay 'stick' so they read as wrong
+
+
+def resolve_style(name):
+    n = (name or '').strip().lower()
+    n = STYLE_ALIASES.get(n, n)
+    return n if n in STYLES else None
+
 BASE = dict(lean=0, head=0, fu=16, fl=8, bu=-16, bl=-8, lfu=7, lfl=3, lbu=-7, lbl=-3,
             rot=0, air=0, look=0.0, lookup=0.0)
 
@@ -214,7 +232,8 @@ def resolve_expr(name):
 
 # ---------------------------------------------------------------- look
 HAIRS = ['none', 'short', 'messy', 'side_part', 'curly', 'long', 'ponytail', 'bun', 'bob', 'buzz']
-OUTFITS = ['hoodie', 'jacket', 'tshirt', 'sweater', 'raincoat', 'coat', 'dress', 'uniform', 'pajamas', 'suit', 'flannel']
+OUTFITS = ['hoodie', 'jacket', 'tshirt', 'sweater', 'raincoat', 'coat', 'dress', 'uniform', 'pajamas', 'suit', 'flannel',
+           'scrubs', 'apron', 'hi_vis', 'overalls']
 WEARS = ['glasses', 'cap', 'beanie', 'beard', 'mustache', 'backpack', 'scarf', 'name_tag', 'hood_up', 'bus_cap']
 SKINS = ['#EAD8C3', '#D9B99B', '#B88A66', '#8D5E3E', '#F2E2D0']
 TYPES = ['person', 'driver', 'shadow', 'silhouette', 'raincoat_man', 'pale_man', 'tall_figure', 'mimic', 'child_ghost']
@@ -233,9 +252,17 @@ class Look:
         self.pants_color = hex_rgba(spec.get('pants_color', '#232B38'))
         self.shoe_color = hex_rgba(spec.get('shoe_color', '#15181D'))
         self.skin = hex_rgba(spec.get('skin', '#EAD8C3'))
+        # second colour of an outfit: apron, vest stripes, overall bib...
+        self.accent_color = hex_rgba(spec.get('accent_color', {'apron': '#E9E4D8', 'hi_vis': '#D9F23A',
+                                                               'overalls': '#3D5A80'}.get(self.outfit, '#D8D2C0')))
         self.wear = [w for w in spec.get('wear', []) if w]
         self.scale = {'kid': 0.68, 'teen': 0.9, 'elder': 0.96}.get(self.age, 1.0) * float(spec.get('size', 1.0))
-        self.head_r = HEAD_R * (1.16 if self.age == 'kid' else 1.0)
+        style = resolve_style(spec.get('style'))
+        if style is None:
+            style = 'stick' if self.type not in ('person', 'driver') else (resolve_style(spec.get('default_style')) or DEFAULT_STYLE)
+        self.style = style
+        self.d = STYLES[style]
+        self.head_r = self.d['head_r'] * (1.16 if self.age == 'kid' else 1.0)
         self.eye_color = hex_rgba(spec.get('eye_color', '#F5F1E8'))
         if self.age == 'elder' and spec.get('hair_color') is None:
             self.hair_color = hex_rgba('#A8A8A8')
@@ -270,7 +297,7 @@ class Look:
         elif t == 'child_ghost':
             self.age = 'kid'
             self.scale = 0.68
-            self.head_r = HEAD_R * 1.16
+            self.head_r = self.d['head_r'] * 1.16
             self.skin = hex_rgba('#DCE3E8')
             self.outfit = 'dress'
             self.outfit_color = hex_rgba('#C9D2D8')
@@ -291,21 +318,24 @@ def add(p, v, k):
 
 def skeleton(a, f, look, ex=None):
     ex = ex or {}
-    hip = (0.0, -(THIGH + SHIN))
-    kf = add(hip, vec(a['lfu'], f), THIGH)
-    ff = add(kf, vec(a['lfl'], f), SHIN)
-    kb = add(hip, vec(a['lbu'], f), THIGH)
-    fb = add(kb, vec(a['lbl'], f), SHIN)
+    d = look.d
+    thigh, shin, torso, upper, fore = d['thigh'], d['shin'], d['torso'], d['upper'], d['fore']
+    hip = (0.0, -(thigh + shin))
+    kf = add(hip, vec(a['lfu'], f), thigh)
+    ff = add(kf, vec(a['lfl'], f), shin)
+    kb = add(hip, vec(a['lbu'], f), thigh)
+    fb = add(kb, vec(a['lbl'], f), shin)
     lean = a['lean']
     up = vec(180 - lean, f)
-    neck = add(hip, up, TORSO)
-    sh = add(hip, up, TORSO - 4)
-    ef = add(sh, vec(a['fu'] - lean, f), UPPER)
-    hf = add(ef, vec(a['fl'] - lean, f), FORE)
-    eb = add(sh, vec(a['bu'] - lean, f), UPPER)
-    hb = add(eb, vec(a['bl'] - lean, f), FORE)
+    neck = add(hip, up, torso)
+    sh = add(hip, up, torso - 4)
+    ef = add(sh, vec(a['fu'] - lean, f), upper)
+    hf = add(ef, vec(a['fl'] - lean, f), fore)
+    eb = add(sh, vec(a['bu'] - lean, f), upper)
+    hb = add(eb, vec(a['bl'] - lean, f), fore)
     head = add(neck, vec(180 - lean - a['head'], f), look.head_r + 1.0)
-    pts = dict(hip=hip, kf=kf, ff=ff, kb=kb, fb=fb, neck=neck, sh=sh, ef=ef, hf=hf, eb=eb, hb=hb, head=head)
+    pts = dict(hip=hip, kf=kf, ff=ff, kb=kb, fb=fb, neck=neck, sh=sh, ef=ef, hf=hf, eb=eb, hb=hb, head=head,
+               hip_f=hip, hip_b=hip, sh_f=sh, sh_b=sh)
     low = max(ff[1], fb[1])
     if ex.get('floor'):
         low = hip[1] + 4
@@ -318,6 +348,25 @@ def skeleton(a, f, look, ex=None):
         r = look.head_r
         pts['hf'] = (hc[0] + f * r * 0.35, hc[1] + r * 0.45)
         pts['ef'] = (hc[0] + f * r * 0.9, hc[1] + r * 1.6)
+    return pts
+
+
+def _spread_limbs(pts, a, f, look, ex):
+    """Move each arm/leg chain sideways so it starts at the edge of a wide torso (chibi style)."""
+    pts = dict(pts)
+    arm = look.d['wt'] * 0.62
+    leg = look.d['wb'] * 0.45
+    groups = ((1, arm, ('sh_f', 'ef', 'hf'), None), (-1, arm, ('sh_b', 'eb', 'hb'), None),
+              (1, leg, ('hip_f', 'kf', 'ff'), 'lfu'), (-1, leg, ('hip_b', 'kb', 'fb'), 'lbu'))
+    for side, k, keys, ang in groups:
+        if ang:
+            # a leg swung forward (sitting) is seen from the side: no sideways offset
+            k *= max(0.0, math.cos(math.radians(a[ang])))
+        if keys[0] == 'sh_f' and ex.get('hand_mouth'):
+            keys = keys[:1]          # the hand stays on the mouth
+        for key in keys:
+            x, y = pts[key]
+            pts[key] = (x + side * f * k, y)
     return pts
 
 
@@ -346,7 +395,7 @@ _HEAD_CACHE = {}
 
 def head_height(look, pose):
     """Head centre height above the ground in figure units (u, before look.scale). Used for camera framing."""
-    key = (look.head_r, pose)
+    key = (look.style, look.head_r, pose)
     if key not in _HEAD_CACHE:
         ex = POSES[pose][2]
         if ex.get('bed'):
@@ -393,16 +442,23 @@ def draw_figure(look, pose, angles, facing, emotion, mouth_open=0.0, blink=False
         bx = (s[0] + h[0]) / 2 - f * 8 * u
         pen.rect(bx - 6 * u, s[1] + 2 * u, bx + 6 * u, h[1] - 2 * u, fill=shade(look.outfit_color, 0.55), r=3 * u)
 
+    chibi = look.d['ink'] and not look.entity
+    if chibi:
+        # chunky body: limbs hang at the sides of the torso, not from its centre line
+        pts = _spread_limbs(pts, a, f, look, ex)
     # back limbs
-    _leg(pen, look, U(pts['hip']), U(pts['kb']), U(pts['fb']), f, u, back=True)
-    _arm(pen, look, U(pts['sh']), U(pts['eb']), U(pts['hb']), u, back=True)
+    _leg(pen, look, U(pts['hip_b']), U(pts['kb']), U(pts['fb']), f, u, back=True)
+    _arm(pen, look, U(pts['sh_b']), U(pts['eb']), U(pts['hb']), u, back=True)
+    if chibi:
+        _leg(pen, look, U(pts['hip_f']), U(pts['kf']), U(pts['ff']), f, u, back=False)
     # torso
     _torso(pen, look, pts, U, f, u, t)
-    # front leg
-    _leg(pen, look, U(pts['hip']), U(pts['kf']), U(pts['ff']), f, u, back=False)
+    if not chibi:
+        _leg(pen, look, U(pts['hip_f']), U(pts['kf']), U(pts['ff']), f, u, back=False)
     if look.outfit in ('raincoat', 'coat', 'dress'):
         _skirt(pen, look, pts, U, f, u)
     # head
+    _ears(pen, look, hc, hr, f, u, outline)
     if entity:
         pen.circle(hc[0], hc[1], hr, fill=look.skin)
     else:
@@ -415,12 +471,42 @@ def draw_figure(look, pose, angles, facing, emotion, mouth_open=0.0, blink=False
     # front arm and held item
     if ex.get('wheel'):
         _draw_wheel(pen, U(pts['hf']), U(pts['hb']), f, u)
-    _arm(pen, look, U(pts['sh']), U(pts['ef']), U(pts['hf']), u, back=False)
+    _arm(pen, look, U(pts['sh_f']), U(pts['ef']), U(pts['hf']), u, back=False)
     hold = ex.get('hold')
     if hold:
         _held(pen, hold, U(pts['hf']), U(pts['hb']), hc, f, u, t)
     img = pen.done()
     return img, ox, oy
+
+
+def _ears(pen, look, hc, r, f, u, outline):
+    if not look.d['ears'] or look.entity or 'hood_up' in look.wear or look.hair in ('long', 'bob'):
+        return
+    ink = look.d['ink'] * u
+    for s in (-1, 1):
+        # the ear on the side the face turns to sits a little further back
+        x = hc[0] + s * r * (0.93 if s != f else 0.9) - f * r * 0.08
+        pen.ellipse(x, hc[1] + r * 0.1, r * 0.2, r * 0.26, fill=look.skin, outline=outline, width=ink)
+        pen.ellipse(x + s * r * 0.02, hc[1] + r * 0.1, r * 0.08, r * 0.13, fill=shade(look.skin, 0.88))
+
+
+def _arm_chibi(pen, look, sh, el, hand, u, w, sleeve, skin):
+    ink = look.d['ink'] * u
+    if look.outfit in ('tshirt', 'dress'):
+        mid = (sh[0] + (el[0] - sh[0]) * 0.55, sh[1] + (el[1] - sh[1]) * 0.55)
+        pen.line([mid, el, hand], LINE_DARK, w * 0.7 + 2 * ink)
+        pen.line([sh, mid], LINE_DARK, w + 2 * ink)
+        pen.line([mid, el, hand], skin, w * 0.7)
+        pen.line([sh, mid], sleeve, w)
+    else:
+        pen.line([sh, el, hand], LINE_DARK, w + 2 * ink)
+        pen.line([sh, el, hand], sleeve, w)
+        if look.outfit == 'flannel':
+            pen.line([el, hand], shade(sleeve, 0.8), w * 0.3)
+        # cuff
+        cx, cy = el[0] + (hand[0] - el[0]) * 0.72, el[1] + (hand[1] - el[1]) * 0.72
+        pen.circle(cx, cy, w * 0.5, fill=shade(sleeve, 0.85))
+    pen.circle(hand[0], hand[1], w * 0.52, fill=skin, outline=LINE_DARK, width=ink)
 
 
 def _limb_colors(look, back):
@@ -430,7 +516,10 @@ def _limb_colors(look, back):
 
 def _arm(pen, look, sh, el, hand, u, back):
     sleeve, _, skin = _limb_colors(look, back)
-    w = ARM_W * u
+    w = look.d['arm_w'] * u
+    if look.d['ink'] and not look.entity:
+        _arm_chibi(pen, look, sh, el, hand, u, w, sleeve, skin)
+        return
     if look.outfit in ('tshirt', 'dress') and not look.entity:
         mid = (sh[0] + (el[0] - sh[0]) * 0.55, sh[1] + (el[1] - sh[1]) * 0.55)
         if not back:
@@ -449,7 +538,15 @@ def _arm(pen, look, sh, el, hand, u, back):
 
 def _leg(pen, look, hip, knee, foot, f, u, back):
     _, pants, _ = _limb_colors(look, back)
-    w = LEG_W * u
+    w = look.d['leg_w'] * u
+    shoe = shade(look.shoe_color, 0.8 if back else 1.0)
+    if look.d['ink'] and not look.entity:
+        ink = look.d['ink'] * u
+        sx, sy = look.d['shoe']
+        pen.line([hip, knee, foot], LINE_DARK, w + 2 * ink)
+        pen.line([hip, knee, foot], pants, w)
+        pen.ellipse(foot[0] + f * 2.4 * u, foot[1] - 0.2 * u, sx * u, sy * u, fill=shoe, outline=LINE_DARK, width=ink)
+        return
     if not back and not look.entity:
         pen.line([hip, knee, foot], shade(pants, 0.6), w + 0.8 * u)
     pen.line([hip, knee, foot], pants, w)
@@ -465,22 +562,42 @@ def _torso(pen, look, pts, U, f, u, t):
     dx, dy = sh[0] - hip[0], sh[1] - hip[1]
     L = math.hypot(dx, dy) or 1
     nx, ny = -dy / L, dx / L     # normal
-    wt, wb = 8.0 * u, 6.8 * u
+    wt, wb = look.d['wt'] * u, look.d['wb'] * u
+    k = wt / (8.0 * u)          # detail scale relative to the stick style
     top = (sh[0] - dx * 0.12, sh[1] - dy * 0.12)
     bot = (hip[0] - dx * 0.05, hip[1] - dy * 0.05)
-    body = [(top[0] + nx * wt, top[1] + ny * wt), (top[0] - nx * wt, top[1] - ny * wt),
-            (bot[0] - nx * wb, bot[1] - ny * wb), (bot[0] + nx * wb, bot[1] + ny * wb)]
+
+    def body_pts(e):
+        return [(top[0] + nx * (wt + e), top[1] + ny * (wt + e)), (top[0] - nx * (wt + e), top[1] - ny * (wt + e)),
+                (bot[0] - nx * (wb + e), bot[1] - ny * (wb + e)), (bot[0] + nx * (wb + e), bot[1] + ny * (wb + e))]
+    ink = 0 if look.entity else look.d['ink'] * u
+    if ink:
+        # outline: same shape drawn slightly larger in ink, then the fill on top
+        pen.poly(body_pts(ink), fill=LINE_DARK)
+        pen.circle(top[0], top[1] + 0.5 * u, wt * 0.98 + ink, fill=LINE_DARK)
+        pen.ellipse(bot[0], bot[1] - 0.5 * u, wb + ink, 2.6 * u + ink, fill=LINE_DARK)
     if look.outfit == 'hoodie' or 'hood_up' in look.wear:
         if 'hood_up' not in look.wear:
-            pen.ellipse(neck[0] - f * 2.5 * u, neck[1] + 1.0 * u, 6.5 * u, 3.6 * u, fill=shade(col, 0.75))
-    pen.poly(body, fill=col)
+            pen.ellipse(neck[0] - f * 2.5 * u, neck[1] + 1.0 * u, 6.5 * u * k, 3.6 * u * k, fill=shade(col, 0.75),
+                        outline=LINE_DARK if ink else None, width=ink * 0.8)
+    pen.poly(body_pts(0), fill=col)
     pen.circle(top[0], top[1] + 0.5 * u, wt * 0.98, fill=col)
+    if ink:
+        pen.ellipse(bot[0], bot[1] - 0.5 * u, wb, 2.6 * u, fill=col)
+        if look.outfit == 'hoodie' and 'hood_up' not in look.wear:
+            # hood collar sitting on the shoulders, with the shirt peeking out at the neck
+            pen.ellipse(neck[0] - f * 0.6 * u, neck[1] + 1.2 * u, wt * 0.62, 3.4 * u, fill=shade(col, 0.88),
+                        outline=LINE_DARK, width=ink * 0.8)
+            pen.ellipse(neck[0] + f * 0.4 * u, neck[1] + 1.6 * u, wt * 0.32, 1.9 * u, fill=hex_rgba('#F2F2F2'))
     o = look.outfit
     if look.entity and look.type in ('shadow', 'silhouette', 'tall_figure'):
         return
     cx = (top[0] + bot[0]) / 2
     if o == 'hoodie':
-        pen.rect(cx - 4.2 * u, bot[1] - 8 * u, cx + 4.2 * u, bot[1] - 3.5 * u, fill=shade(col, 0.82), r=1.5 * u)
+        pen.rect(cx - 4.2 * u * k, bot[1] - 8 * u * k, cx + 4.2 * u * k, bot[1] - 3.5 * u * k, fill=shade(col, 0.82),
+                 r=1.5 * u * k, outline=shade(col, 0.6) if ink else None, width=ink * 0.5)
+        if ink:
+            return
         for s in (-1, 1):
             pen.line([(neck[0] + s * 1.6 * u, neck[1] + 2 * u), (neck[0] + s * 1.9 * u, neck[1] + 8 * u)],
                      shade(col, 1.35), 0.55 * u)
@@ -514,6 +631,32 @@ def _torso(pen, look, pts, U, f, u, t):
     elif o == 'pajamas':
         for i in range(4):
             pen.circle(cx - 3 * u + (i % 2) * 6 * u, neck[1] + 5 * u + i * 4 * u, 0.9 * u, fill=shade(col, 1.25))
+    elif o == 'scrubs':
+        pen.poly([(neck[0] - 2.6 * u * k, neck[1] + 1.2 * u), (neck[0] + 2.6 * u * k, neck[1] + 1.2 * u),
+                  (neck[0], neck[1] + 6.5 * u * k)], fill=shade(col, 0.7))
+        pen.rect(cx + f * 1.2 * u * k, neck[1] + 7 * u * k, cx + f * 4.6 * u * k, neck[1] + 10.5 * u * k,
+                 fill=shade(col, 0.88), r=0.5 * u)
+    elif o in ('apron', 'overalls'):
+        ac = look.accent_color
+        top_y = neck[1] + (5.5 if o == 'apron' else 7.5) * u * k
+        bw = (wb * 0.78) if o == 'apron' else (wb * 0.62)
+        for s_ in (-1, 1):
+            pen.line([(cx + s_ * bw * 0.7, top_y), (neck[0] + s_ * 4.2 * u * k, neck[1] + 0.8 * u)], shade(ac, 0.85), 1.2 * u * k)
+        pen.rect(cx - bw, top_y, cx + bw, bot[1] + (6 if o == 'apron' else 1) * u * k, fill=ac, r=1.5 * u * k,
+                 outline=LINE_DARK if ink else None, width=ink * 0.6)
+        if o == 'overalls':
+            for s_ in (-1, 1):
+                pen.circle(cx + s_ * bw * 0.65, top_y + 1.4 * u * k, 0.7 * u * k, fill=hex_rgba('#C9B37A'))
+        else:
+            pen.rect(cx - bw * 0.5, top_y + 6 * u * k, cx + bw * 0.5, top_y + 10 * u * k, fill=shade(ac, 0.9), r=0.6 * u)
+    elif o == 'hi_vis':
+        ac = look.accent_color
+        pen.poly([(neck[0] - 3.5 * u * k, neck[1] + 0.8 * u), (neck[0] - 7 * u * k, neck[1] + 2 * u),
+                  (cx - wb * 0.95, bot[1]), (cx + wb * 0.95, bot[1]), (neck[0] + 7 * u * k, neck[1] + 2 * u),
+                  (neck[0] + 3.5 * u * k, neck[1] + 0.8 * u), (cx, neck[1] + 9 * u * k)], fill=ac)
+        for i in range(2):
+            y = bot[1] - (3.5 + i * 5.5) * u * k
+            pen.line([(cx - wb * 0.9, y), (cx + wb * 0.9, y)], hex_rgba('#E4E6E8'), 1.4 * u * k)
     elif o == 'raincoat':
         pen.line([(neck[0], neck[1] + 1 * u), (cx, bot[1] + 8 * u)], shade(col, 0.72), 0.6 * u)
         for i in range(3):
@@ -523,11 +666,14 @@ def _torso(pen, look, pts, U, f, u, t):
 def _skirt(pen, look, pts, U, f, u):
     hip = U(pts['hip'])
     col = look.outfit_color
-    ln = {'raincoat': 14, 'coat': 16, 'dress': 13}[look.outfit] * u
+    k = look.d['wb'] / 6.8
+    ln = {'raincoat': 14, 'coat': 16, 'dress': 13}[look.outfit] * u * (look.d['thigh'] + look.d['shin']) / 36.0
     if look.type == 'tall_figure':
         ln *= 1.6
-    pen.poly([(hip[0] - 6.4 * u, hip[1] - 1.5 * u), (hip[0] + 6.4 * u, hip[1] - 1.5 * u),
-              (hip[0] + 9.5 * u, hip[1] + ln), (hip[0] - 9.5 * u, hip[1] + ln)], fill=col)
+    ink = 0 if look.entity else look.d['ink'] * u
+    pen.poly([(hip[0] - 6.4 * u * k, hip[1] - 1.5 * u), (hip[0] + 6.4 * u * k, hip[1] - 1.5 * u),
+              (hip[0] + 9.5 * u * k, hip[1] + ln), (hip[0] - 9.5 * u * k, hip[1] + ln)], fill=col,
+             outline=LINE_DARK if ink else None, width=ink)
 
 
 def _draw_seat(pen, ox, oy, u, f):
@@ -566,6 +712,7 @@ def _draw_bed(pen, look, pts0, f, a, emotion, mouth_open, blink, t, u, ox, oy, e
     hc = (ox + pts['head'][0] * u, oy + pts['head'][1] * u)
     hr = look.head_r * u
     _hair_back(pen, look, hc, hr, f, u)
+    _ears(pen, look, hc, hr, f, u, LINE_DARK)
     pen.circle(hc[0], hc[1], hr, fill=look.skin, outline=LINE_DARK, width=0.9 * u)
     _hair_front(pen, look, hc, hr, f, u)
     lookup = dict(a)
@@ -682,7 +829,13 @@ def _face(pen, look, hc, r, f, a, emotion, mouth_open, blink, t, u):
     for s in (-1, 1):
         x = fx + s * gap
         y = ey
-        if eyes == 'open':
+        if look.style == 'chibi' and not look.entity and eyes in ('open', 'narrow'):
+            # simple bead eyes with a highlight, like the mascot reference
+            ry = er * (0.78 if eyes == 'open' else 0.45)
+            ex_, ey_ = x + f * er * 0.15, y - look_up * er * 0.3 + er * 0.1
+            pen.ellipse(ex_, ey_, er * 0.52, ry, fill=INK)
+            pen.circle(ex_ - er * 0.15, ey_ - ry * 0.4, er * 0.17, fill=(255, 255, 255, 255))
+        elif eyes == 'open':
             pen.ellipse(x, y, er, er * 1.15, fill=sclera, outline=INK, width=lw * 0.6)
             pen.circle(x + f * er * 0.25, y - look_up * er * 0.35 + er * 0.1, er * 0.55 * pupil_k, fill=INK)
             pen.circle(x + f * er * 0.25 - er * 0.18, y - er * 0.12, er * 0.16, fill=(255, 255, 255, 255))
@@ -876,6 +1029,7 @@ def library():
         'pose_aliases': ALIASES,
         'emotions': sorted(EXPR.keys()),
         'hair': HAIRS,
+        'styles': list(STYLES),
         'outfits': OUTFITS,
         'wear': WEARS,
         'types': TYPES,

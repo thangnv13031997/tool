@@ -485,6 +485,10 @@
   "bob",
   "buzz"
  ],
+ "styles": [
+  "stick",
+  "chibi"
+ ],
  "outfits": [
   "hoodie",
   "jacket",
@@ -496,7 +500,11 @@
   "uniform",
   "pajamas",
   "suit",
-  "flannel"
+  "flannel",
+  "scrubs",
+  "apron",
+  "hi_vis",
+  "overalls"
  ],
  "wear": [
   "glasses",

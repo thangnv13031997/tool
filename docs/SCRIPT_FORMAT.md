@@ -10,7 +10,9 @@ Xem tập mẫu `scripts/ep01_night_shift_rules.json` để biết cách viết 
 | title | Tên tập (tiếng Anh) |
 | target_minutes | Thời lượng mong muốn, tool cảnh báo nếu lệch nhiều |
 | narrator | Giọng người kể (hành khách): `voice`, `speed`, `fx` |
+| figure_style | Kiểu vẽ người cho cả tập: `chibi` (mặc định: đầu tròn to có tai, thân và tay chân mập có viền) hoặc `stick` (người que gầy kiểu cũ). Bỏ trống thì lấy `figure_style` trong config.json |
 | cast | Nhân vật. `role`: main (người kể), host (Mr. Long). `type`: person, driver, shadow, silhouette, tall_figure, raincoat_man, pale_man, mimic, child_ghost |
+| cast (trang phục) | Mỗi nhân vật tự chọn: `outfit` (hoodie, jacket, tshirt, sweater, raincoat, coat, dress, uniform, pajamas, suit, flannel, scrubs, apron, hi_vis, overalls), `outfit_color`, `accent_color` (màu tạp dề / áo phản quang / yếm), `pants_color`, `shoe_color`, `hair`, `hair_color`, `skin`, `wear` (kính, mũ, râu, ba lô...). `style` riêng cho 1 nhân vật nếu muốn khác cả tập. Thực thể (ma, bóng đen, người áo mưa...) mặc định vẫn vẽ kiểu `stick` cho đáng sợ |
 | youtube | `title_options`, `description`, `tags`, `hashtags`, `pinned_comment`, `thumbnail.variants` (3 bố cục: face_threat, object, split) |
 | shorts | `scenes: [từ, đến]` (đánh số từ 1), `hook_text`, `end_text` |
 | scenes | Danh sách cảnh |

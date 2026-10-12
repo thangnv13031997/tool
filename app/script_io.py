@@ -151,6 +151,12 @@ def normalize(data, cfg):
     if nv not in ALL_VOICES:
         issues.append(Issue('Giọng lạ', f'giọng kể "{nv}" không có trong Kokoro, vẫn thử dùng'))
 
+    fig_style = data.get('figure_style') or cfg.get('figure_style') or F.DEFAULT_STYLE
+    if not F.resolve_style(fig_style):
+        issues.append(Issue('Kiểu vẽ lạ', f'figure_style "{fig_style}" chưa có ({", ".join(F.STYLES)}), dùng "{F.DEFAULT_STYLE}"'))
+        fig_style = F.DEFAULT_STYLE
+    out['figure_style'] = F.resolve_style(fig_style)
+
     fi = mi = ki = 0
     for i, c in enumerate(cast_in):
         name = c.get('name') or f'Person {i + 1}'
@@ -176,6 +182,10 @@ def normalize(data, cfg):
                 issues.append(Issue('Thiếu phụ kiện', f'"{w}" của {name} chưa có, bỏ qua'))
         spec['wear'] = wear
         spec['name'] = name
+        if spec.get('style') and not F.resolve_style(spec['style']):
+            issues.append(Issue('Kiểu vẽ lạ', f'"{spec["style"]}" của {name} chưa có ({", ".join(F.STYLES)}), dùng mặc định'))
+            spec.pop('style')
+        spec['default_style'] = fig_style
         look = F.Look(spec)
         voice = c.get('voice')
         if not voice:
@@ -289,7 +299,7 @@ def normalize(data, cfg):
             k = _key(c.get('name'))
             if k not in out['cast']:
                 issues.append(Issue('Nhân vật chưa khai báo', f'"{c.get("name")}" không có trong cast, tạo tạm', si))
-                look = F.Look({'name': c.get('name')})
+                look = F.Look({'name': c.get('name'), 'default_style': out['figure_style']})
                 out['cast'][k] = {'name': c.get('name'), 'look': look, 'voice': VOICES_MALE[0], 'role': '', 'speed': 1.0}
                 out['voices'][k] = VOICES_MALE[0]
                 out['voice_fx'][k] = None

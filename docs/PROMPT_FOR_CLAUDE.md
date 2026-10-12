@@ -96,7 +96,9 @@ Output ONE JSON object. Fields not listed here are ignored. Scene settings **car
 ### Cast
 - `role`: `main` (the passenger who narrates), `host` (Mr. Long), or empty.
 - `type`: `person` (default), `driver`, `shadow`, `silhouette`, `tall_figure`, `raincoat_man`, `pale_man`, `mimic`, `child_ghost`.
-- `gender` male/female, `age` adult/teen/kid/elder, `hair`, `hair_color`, `outfit`, `outfit_color`, `pants_color`, `skin`, `wear` (list).
+- `gender` male/female, `age` adult/teen/kid/elder, `hair`, `hair_color`, `outfit`, `outfit_color`, `accent_color`, `pants_color`, `shoe_color`, `skin`, `wear` (list).
+- Give every person a distinct outfit that fits their job: `scrubs` (nurse/doctor), `apron` (cashier, cook), `hi_vis` (road worker, trucker), `overalls` (farmer, mechanic), `uniform` (driver, guard), plus hoodie/jacket/tshirt/sweater/coat/dress/pajamas/suit/flannel/raincoat. `accent_color` colours the apron, vest or bib.
+- People are drawn in the `chibi` style (big round head with ears, chunky outlined body). Entities stay thin `stick` figures so they look wrong next to people. Top-level `"figure_style": "stick"` switches the whole episode back to classic stick figures.
 - `voice`: a Kokoro voice. Already installed on the owner's PC (prefer these): narrators `af_heart` (best), `af_bella`, `am_michael`, `am_fenrir`; host Mr. Long `bm_george` + `deep_reverb`; others `bm_lewis`, `bf_emma`, `bf_isabella`, `af_sarah`, `af_nicole` (soft, good for whispers), `am_puck`; kids `af_sky`. Other Kokoro voices download on first use.
 - `voice_fx` (default effect for that character): `deep_reverb` (host), `creepy`, `demon`, `distant`, `phone`, `radio`, `cold`, `echo`.
 

@@ -21,5 +21,6 @@
   "keep_wav": false,
   "anthropic_api_key": "",
   "claude_model": "claude-sonnet-5-5",
-  "shorts_scale": 1.4
+  "shorts_scale": 1.4,
+  "figure_style": "chibi"
 }
