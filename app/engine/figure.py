@@ -23,8 +23,8 @@ LINE_DARK = hex_rgba('#0E1116')
 STYLES = {
     'stick': dict(thigh=THIGH, shin=SHIN, torso=TORSO, upper=UPPER, fore=FORE, head_r=HEAD_R,
                   arm_w=ARM_W, leg_w=LEG_W, wt=8.0, wb=6.8, ears=False, ink=0.0, shoe=(3.8, 1.9)),
-    'chibi': dict(thigh=12.5, shin=12.0, torso=25.0, upper=12.5, fore=11.0, head_r=18.0,
-                  arm_w=7.6, leg_w=9.0, wt=12.0, wb=11.6, ears=True, ink=1.0, shoe=(5.6, 3.0)),
+    'chibi': dict(thigh=12.0, shin=11.0, torso=25.0, upper=12.5, fore=11.5, head_r=18.0,
+                  arm_w=8.4, leg_w=8.8, wt=14.0, wb=14.3, ears=True, ink=0.65, shoe=(5.4, 4.0)),
 }
 STYLE_ALIASES = {'stickman': 'stick', 'thin': 'stick', 'classic': 'stick',
                  'mascot': 'chibi', 'chunky': 'chibi', 'cute': 'chibi', 'relatable': 'chibi'}
@@ -354,8 +354,8 @@ def skeleton(a, f, look, ex=None):
 def _spread_limbs(pts, a, f, look, ex):
     """Move each arm/leg chain sideways so it starts at the edge of a wide torso (chibi style)."""
     pts = dict(pts)
-    arm = look.d['wt'] * 0.62
-    leg = look.d['wb'] * 0.45
+    arm = look.d['wt'] * 0.92
+    leg = look.d['wb'] * 0.42
     groups = ((1, arm, ('sh_f', 'ef', 'hf'), None), (-1, arm, ('sh_b', 'eb', 'hb'), None),
               (1, leg, ('hip_f', 'kf', 'ff'), 'lfu'), (-1, leg, ('hip_b', 'kb', 'fb'), 'lbu'))
     for side, k, keys, ang in groups:
@@ -367,6 +367,9 @@ def _spread_limbs(pts, a, f, look, ex):
         for key in keys:
             x, y = pts[key]
             pts[key] = (x + side * f * k, y)
+        if keys[0].startswith('sh'):
+            x, y = pts[keys[0]]
+            pts[keys[0]] = (x - side * f * 1.2, y + 2.2)
     return pts
 
 
@@ -461,6 +464,9 @@ def draw_figure(look, pose, angles, facing, emotion, mouth_open=0.0, blink=False
     _ears(pen, look, hc, hr, f, u, outline)
     if entity:
         pen.circle(hc[0], hc[1], hr, fill=look.skin)
+    elif chibi:
+        pen.circle(hc[0], hc[1], hr, fill=look.skin, outline=outline, width=look.d['ink'] * u)
+        _head_shade(pen, look, hc, hr, f)
     else:
         pen.circle(hc[0], hc[1], hr, fill=look.skin, outline=outline, width=0.9 * u)
     _hair_front(pen, look, hc, hr, f, u)
@@ -479,38 +485,124 @@ def draw_figure(look, pose, angles, facing, emotion, mouth_open=0.0, blink=False
     return img, ox, oy
 
 
+def _cubic(p0, p1, p2, p3, n=16):
+    out = []
+    for i in range(n + 1):
+        t = i / n
+        a, b, c, d = (1 - t) ** 3, 3 * (1 - t) ** 2 * t, 3 * (1 - t) * t * t, t ** 3
+        out.append((a * p0[0] + b * p1[0] + c * p2[0] + d * p3[0], a * p0[1] + b * p1[1] + c * p2[1] + d * p3[1]))
+    return out
+
+
+def _chain(*segs):
+    out = []
+    for sg in segs:
+        out += sg if not out else sg[1:]
+    return out
+
+
+def _tube(pts, w0, w1):
+    """Outline of a tapered tube along a polyline (half widths w0 -> w1)."""
+    left, right = [], []
+    n = len(pts)
+    for i in range(n):
+        a, b = pts[max(0, i - 1)], pts[min(n - 1, i + 1)]
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(dx, dy) or 1
+        nx, ny = -dy / L, dx / L
+        w = w0 + (w1 - w0) * i / max(1, n - 1)
+        left.append((pts[i][0] + nx * w, pts[i][1] + ny * w))
+        right.append((pts[i][0] - nx * w, pts[i][1] - ny * w))
+    def cap(p, q, w):
+        ang = math.atan2(p[1] - q[1], p[0] - q[0])
+        return [(p[0] + w * math.cos(ang + math.pi / 2 - math.pi * j / 8), p[1] + w * math.sin(ang + math.pi / 2 - math.pi * j / 8))
+                for j in range(1, 8)]
+    return left + cap(pts[-1], pts[-2], w1) + list(reversed(right)) + cap(pts[0], pts[1], w0)
+
+
+def _bend(a, b, c, n=16):
+    """Smooth curve from a to c that bends at joint b."""
+    return _cubic(a, (a[0] + (b[0] - a[0]) * 0.9, a[1] + (b[1] - a[1]) * 0.9),
+                  (c[0] + (b[0] - c[0]) * 0.9, c[1] + (b[1] - c[1]) * 0.9), c, n)
+
+
 def _ears(pen, look, hc, r, f, u, outline):
     if not look.d['ears'] or look.entity or 'hood_up' in look.wear or look.hair in ('long', 'bob'):
         return
     ink = look.d['ink'] * u
     for s in (-1, 1):
-        # the ear on the side the face turns to sits a little further back
-        x = hc[0] + s * r * (0.93 if s != f else 0.9) - f * r * 0.08
-        pen.ellipse(x, hc[1] + r * 0.1, r * 0.2, r * 0.26, fill=look.skin, outline=outline, width=ink)
-        pen.ellipse(x + s * r * 0.02, hc[1] + r * 0.1, r * 0.08, r * 0.13, fill=shade(look.skin, 0.88))
+        x = hc[0] + s * r * 0.97 + f * r * 0.04
+        pen.ellipse(x, hc[1] + r * 0.1, r * 0.17, r * 0.22, fill=look.skin, outline=outline, width=ink)
+        pen.arc(x + s * r * 0.01, hc[1] + r * 0.1, r * 0.07, r * 0.11, -90 if s > 0 else 90, 90 if s > 0 else 270,
+                shade(look.skin, 0.7), ink * 0.9)
+
+
+def _head_shade(pen, look, hc, r, f):
+    """Soft crescent of shadow on the far side of a round head."""
+    cx, cy = hc
+    s = -f
+    pen.poly(_chain(_cubic((cx + s * r * 0.5, cy - r * 0.86), (cx + s * r * 1.04, cy - r * 0.35), (cx + s * r * 1.02, cy + r * 0.5), (cx + s * r * 0.4, cy + r * 0.91)),
+                    _cubic((cx + s * r * 0.4, cy + r * 0.91), (cx + s * r * 0.84, cy + r * 0.4), (cx + s * r * 0.88, cy - r * 0.3), (cx + s * r * 0.5, cy - r * 0.86))),
+             fill=shade(look.skin, 0.93))
+
+
+def _torso_mascot(pen, look, hip, up, nrm, f, u, ink):
+    """Soft one-piece top (hoodie silhouette) in the torso's own frame: x across, y up from the hip."""
+    d = look.d
+    col = look.outfit_color
+    dk = shade(col, 0.78)
+    upx, upy = up                 # unit vector hip -> shoulder
+
+    def T(x, y):
+        return (hip[0] + nrm[0] * x * u + upx * y * u, hip[1] + nrm[1] * x * u + upy * y * u)
+
+    def TT(pts):
+        return [T(x, y) for x, y in pts]
+    SW, HW = d['wt'], d['wb']
+    yN, yH = d['torso'] - 0.3, -2.0
+    half = _chain(_cubic((-5.5, yN), (-SW * 0.9, yN + 0.1), (-SW * 1.08, yN - 2.5), (-SW * 1.04, yN - 10)),
+                  _cubic((-SW * 1.04, yN - 10), (-HW * 1.03, yH + 6.5), (-HW * 1.04, yH + 0.5), (-HW * 0.9, yH - 1)))
+    body = half + [(-x, y) for x, y in reversed(half)]
+    pen.poly(TT(body), fill=col, outline=LINE_DARK, width=ink)
+    sb = -f   # shadow on the far side
+    pen.poly(TT(_chain(_cubic((sb * HW * 0.5, yN - 3.5), (sb * HW * 0.98, yN - 8), (sb * HW * 1.02, yH + 8), (sb * HW * 0.82, yH + 1)),
+                       _cubic((sb * HW * 0.82, yH + 1), (sb * HW * 0.8, yH + 8), (sb * HW * 0.82, yN - 9), (sb * HW * 0.5, yN - 3.5)))),
+             fill=shade(col, 0.9))
+    o = look.outfit
+    if o in ('hoodie', 'sweater', 'pajamas', 'tshirt', 'flannel', 'scrubs', 'hi_vis', 'overalls', 'apron'):
+        # waistband / hem
+        pen.poly(TT([(-HW * 0.9, yH - 1), (HW * 0.9, yH - 1), (HW * 0.93, yH + 2.4), (-HW * 0.93, yH + 2.4)]),
+                 fill=shade(col, 0.85), outline=LINE_DARK, width=ink * 0.8)
+    if o == 'hoodie' and 'hood_up' not in look.wear:
+        pen.poly(TT([(-6.2, yH + 11), (6.2, yH + 11), (8.2, yH + 3.6), (-8.2, yH + 3.6)]), fill=shade(col, 0.93),
+                 outline=dk, width=ink * 0.9)
+        hood = _cubic((-10.8, yN + 0.3), (-10, yN - 6.2), (10, yN - 6.2), (10.8, yN + 0.3))
+        pen.poly(TT(hood), fill=dk, outline=LINE_DARK, width=ink)
+        pen.ellipse(*T(0, yN - 1), 4.2 * u, 1.8 * u, fill=hex_rgba('#F2F2F2'))
+        for s in (-1, 1):
+            pen.line(TT([(s * 2.5, yN - 3.2), (s * 2.8, yN - 9.5)]), hex_rgba('#F2F2F2'), ink * 1.1)
 
 
 def _arm_chibi(pen, look, sh, el, hand, u, w, sleeve, skin):
     ink = look.d['ink'] * u
-    if look.outfit in ('tshirt', 'dress'):
-        mid = (sh[0] + (el[0] - sh[0]) * 0.55, sh[1] + (el[1] - sh[1]) * 0.55)
-        pen.line([mid, el, hand], LINE_DARK, w * 0.7 + 2 * ink)
-        pen.line([sh, mid], LINE_DARK, w + 2 * ink)
-        pen.line([mid, el, hand], skin, w * 0.7)
-        pen.line([sh, mid], sleeve, w)
+    hw = w / 2
+    path = _bend(sh, el, hand)
+    if look.outfit in ('tshirt', 'dress', 'scrubs'):
+        n = len(path) // 2
+        pen.poly(_tube(path[n - 1:], hw * 0.62, hw * 0.55), fill=skin, outline=LINE_DARK, width=ink)
+        pen.poly(_tube(path[:n + 1], hw, hw * 0.9), fill=sleeve, outline=LINE_DARK, width=ink)
     else:
-        pen.line([sh, el, hand], LINE_DARK, w + 2 * ink)
-        pen.line([sh, el, hand], sleeve, w)
+        pen.poly(_tube(path, hw, hw * 0.8), fill=sleeve, outline=LINE_DARK, width=ink)
         if look.outfit == 'flannel':
-            pen.line([el, hand], shade(sleeve, 0.8), w * 0.3)
-        # cuff
-        cx, cy = el[0] + (hand[0] - el[0]) * 0.72, el[1] + (hand[1] - el[1]) * 0.72
-        pen.circle(cx, cy, w * 0.5, fill=shade(sleeve, 0.85))
-    pen.circle(hand[0], hand[1], w * 0.52, fill=skin, outline=LINE_DARK, width=ink)
+            pen.line(path[len(path) // 2:], shade(sleeve, 0.8), w * 0.25)
+    a, b = path[-3], path[-1]
+    L = math.hypot(b[0] - a[0], b[1] - a[1]) or 1
+    hx, hy = b[0] + (b[0] - a[0]) / L * hw * 0.6, b[1] + (b[1] - a[1]) / L * hw * 0.6
+    pen.circle(hx, hy, hw * 0.78, fill=skin, outline=LINE_DARK, width=ink)
 
 
 def _limb_colors(look, back):
-    k = 0.72 if back else 1.0
+    k = (0.86 if look.d['ink'] and not look.entity else 0.72) if back else 1.0
     return shade(look.outfit_color, k), shade(look.pants_color, k), shade(look.skin, 0.85 if back else 1.0)
 
 
@@ -543,9 +635,15 @@ def _leg(pen, look, hip, knee, foot, f, u, back):
     if look.d['ink'] and not look.entity:
         ink = look.d['ink'] * u
         sx, sy = look.d['shoe']
-        pen.line([hip, knee, foot], LINE_DARK, w + 2 * ink)
-        pen.line([hip, knee, foot], pants, w)
-        pen.ellipse(foot[0] + f * 2.4 * u, foot[1] - 0.2 * u, sx * u, sy * u, fill=shoe, outline=LINE_DARK, width=ink)
+        L = math.hypot(foot[0] - knee[0], foot[1] - knee[1]) or 1
+        end = (foot[0] - (foot[0] - knee[0]) / L * 2.2 * u, foot[1] - (foot[1] - knee[1]) / L * 2.2 * u)
+        path = _bend(hip, knee, end)
+        pen.poly(_tube(path, w / 2, w * 0.44), fill=pants, outline=LINE_DARK, width=ink)
+        bx, by = foot[0] + f * 1.3 * u, foot[1] + 0.5 * u
+        dome = [(bx + sx * u * math.cos(math.radians(a_)), by - sy * u * math.sin(math.radians(a_)) ** 0.8) for a_ in range(0, 181, 10)]
+        pen.poly(dome, fill=shoe, outline=LINE_DARK, width=ink)
+        pen.poly([(bx - sx * u, by - 0.9 * u), (bx + sx * u, by - 0.9 * u), (bx + sx * u, by), (bx - sx * u, by)],
+                 fill=shade(shoe, 1.35), outline=LINE_DARK, width=ink * 0.8)
         return
     if not back and not look.entity:
         pen.line([hip, knee, foot], shade(pants, 0.6), w + 0.8 * u)
@@ -567,37 +665,25 @@ def _torso(pen, look, pts, U, f, u, t):
     top = (sh[0] - dx * 0.12, sh[1] - dy * 0.12)
     bot = (hip[0] - dx * 0.05, hip[1] - dy * 0.05)
 
-    def body_pts(e):
-        return [(top[0] + nx * (wt + e), top[1] + ny * (wt + e)), (top[0] - nx * (wt + e), top[1] - ny * (wt + e)),
-                (bot[0] - nx * (wb + e), bot[1] - ny * (wb + e)), (bot[0] + nx * (wb + e), bot[1] + ny * (wb + e))]
     ink = 0 if look.entity else look.d['ink'] * u
-    if ink:
-        # outline: same shape drawn slightly larger in ink, then the fill on top
-        pen.poly(body_pts(ink), fill=LINE_DARK)
-        pen.circle(top[0], top[1] + 0.5 * u, wt * 0.98 + ink, fill=LINE_DARK)
-        pen.ellipse(bot[0], bot[1] - 0.5 * u, wb + ink, 2.6 * u + ink, fill=LINE_DARK)
-    if look.outfit == 'hoodie' or 'hood_up' in look.wear:
-        if 'hood_up' not in look.wear:
-            pen.ellipse(neck[0] - f * 2.5 * u, neck[1] + 1.0 * u, 6.5 * u * k, 3.6 * u * k, fill=shade(col, 0.75),
-                        outline=LINE_DARK if ink else None, width=ink * 0.8)
-    pen.poly(body_pts(0), fill=col)
-    pen.circle(top[0], top[1] + 0.5 * u, wt * 0.98, fill=col)
-    if ink:
-        pen.ellipse(bot[0], bot[1] - 0.5 * u, wb, 2.6 * u, fill=col)
-        if look.outfit == 'hoodie' and 'hood_up' not in look.wear:
-            # hood collar sitting on the shoulders, with the shirt peeking out at the neck
-            pen.ellipse(neck[0] - f * 0.6 * u, neck[1] + 1.2 * u, wt * 0.62, 3.4 * u, fill=shade(col, 0.88),
-                        outline=LINE_DARK, width=ink * 0.8)
-            pen.ellipse(neck[0] + f * 0.4 * u, neck[1] + 1.6 * u, wt * 0.32, 1.9 * u, fill=hex_rgba('#F2F2F2'))
     o = look.outfit
+    cx = (top[0] + bot[0]) / 2
+    if ink:
+        _torso_mascot(pen, look, hip, (dx / L, dy / L), (nx, ny), f, u, ink)
+        if o == 'hoodie':
+            return
+    else:
+        body = [(top[0] + nx * wt, top[1] + ny * wt), (top[0] - nx * wt, top[1] - ny * wt),
+                (bot[0] - nx * wb, bot[1] - ny * wb), (bot[0] + nx * wb, bot[1] + ny * wb)]
+        if look.outfit == 'hoodie' or 'hood_up' in look.wear:
+            if 'hood_up' not in look.wear:
+                pen.ellipse(neck[0] - f * 2.5 * u, neck[1] + 1.0 * u, 6.5 * u, 3.6 * u, fill=shade(col, 0.75))
+        pen.poly(body, fill=col)
+        pen.circle(top[0], top[1] + 0.5 * u, wt * 0.98, fill=col)
     if look.entity and look.type in ('shadow', 'silhouette', 'tall_figure'):
         return
-    cx = (top[0] + bot[0]) / 2
     if o == 'hoodie':
-        pen.rect(cx - 4.2 * u * k, bot[1] - 8 * u * k, cx + 4.2 * u * k, bot[1] - 3.5 * u * k, fill=shade(col, 0.82),
-                 r=1.5 * u * k, outline=shade(col, 0.6) if ink else None, width=ink * 0.5)
-        if ink:
-            return
+        pen.rect(cx - 4.2 * u, bot[1] - 8 * u, cx + 4.2 * u, bot[1] - 3.5 * u, fill=shade(col, 0.82), r=1.5 * u)
         for s in (-1, 1):
             pen.line([(neck[0] + s * 1.6 * u, neck[1] + 2 * u), (neck[0] + s * 1.9 * u, neck[1] + 8 * u)],
                      shade(col, 1.35), 0.55 * u)
@@ -813,7 +899,8 @@ TEAR = hex_rgba('#7FB3E0')
 def _face(pen, look, hc, r, f, a, emotion, mouth_open, blink, t, u):
     spec = EXPR.get(emotion, EXPR['neutral'])
     cx, cy = hc
-    fx = cx + f * r * 0.22 + a.get('look', 0.0) * r * 0.1 * f
+    mascot = look.style == 'chibi' and not look.entity
+    fx = cx + f * r * (0.1 if mascot else 0.22) + a.get('look', 0.0) * r * 0.1 * f
     fy = cy + a.get('head', 0) * 0.01 * r
     look_up = a.get('lookup', 0.0)
     gap = r * 0.34
@@ -821,20 +908,28 @@ def _face(pen, look, hc, r, f, a, emotion, mouth_open, blink, t, u):
     eyes = spec['eyes']
     if blink and eyes in ('open', 'wide', 'narrow'):
         eyes = 'closed'
-    lw = 0.1 * r
+    lw = (0.055 if mascot else 0.1) * r
     er = 0.2 * r
+    if mascot:
+        gap = r * 0.32
+        ey = fy + r * 0.06
     pupil_k = spec.get('pupil', 1.0)
     sclera = look.eye_color
     entity_type = look.type
     for s in (-1, 1):
         x = fx + s * gap
         y = ey
-        if look.style == 'chibi' and not look.entity and eyes in ('open', 'narrow'):
-            # simple bead eyes with a highlight, like the mascot reference
-            ry = er * (0.78 if eyes == 'open' else 0.45)
-            ex_, ey_ = x + f * er * 0.15, y - look_up * er * 0.3 + er * 0.1
-            pen.ellipse(ex_, ey_, er * 0.52, ry, fill=INK)
-            pen.circle(ex_ - er * 0.15, ey_ - ry * 0.4, er * 0.17, fill=(255, 255, 255, 255))
+        if mascot and eyes in ('open', 'narrow', 'half'):
+            # bead eyes with a highlight, like the mascot reference
+            ry = er * {'open': 0.52, 'narrow': 0.3, 'half': 0.34}[eyes]
+            ex_, ey_ = x + f * er * 0.12, y - look_up * er * 0.25 + (er * 0.12 if eyes == 'half' else 0)
+            pen.ellipse(ex_, ey_, er * 0.37, ry, fill=INK)
+            pen.circle(ex_ - er * 0.12, ey_ - ry * 0.4, er * 0.13, fill=(255, 255, 255, 255))
+            if eyes == 'half':
+                pen.line([(ex_ - er * 0.6, ey_ - ry * 0.75), (ex_ + er * 0.6, ey_ - ry * 0.75)], INK, lw)
+        elif mascot and eyes in ('wide', 'stare'):
+            pen.ellipse(x, y, er * 0.75, er * 0.92, fill=sclera, outline=INK, width=lw * 0.8)
+            pen.circle(x + f * er * 0.1, y - look_up * er * 0.25, er * (0.28 if eyes == 'wide' else 0.18) * pupil_k, fill=INK)
         elif eyes == 'open':
             pen.ellipse(x, y, er, er * 1.15, fill=sclera, outline=INK, width=lw * 0.6)
             pen.circle(x + f * er * 0.25, y - look_up * er * 0.35 + er * 0.1, er * 0.55 * pupil_k, fill=INK)
@@ -865,8 +960,8 @@ def _face(pen, look, hc, r, f, a, emotion, mouth_open, blink, t, u):
         elif eyes == 'glow':
             pen.ellipse(x, y, er * 0.9, er * 0.55, fill=look.eye_color)
     br = spec.get('brows')
-    by = ey - r * 0.4
-    bl = r * 0.2
+    by = ey - r * (0.3 if mascot else 0.4)
+    bl = r * (0.13 if mascot else 0.2)
     if br and not look.entity:
         bcol = shade(look.hair_color, 0.8) if look.hair not in ('none',) else INK
         for s in (-1, 1):
@@ -902,6 +997,10 @@ def _face(pen, look, hc, r, f, a, emotion, mouth_open, blink, t, u):
         pen.ellipse(mx, my, ow, oh, fill=MOUTH_DARK, outline=INK, width=lw * 0.5)
     elif mouth == 'smile_small':
         pen.arc(mx, my - mw * 0.35, mw * 0.65, mw * 0.5, 30, 150, INK, lw)
+    elif mouth in ('smile', 'open_smile') and mascot:
+        pts = _cubic((mx - mw * 0.62, my - mw * 0.15), (mx - mw * 0.48, my + mw * 0.85), (mx + mw * 0.48, my + mw * 0.85), (mx + mw * 0.62, my - mw * 0.15))
+        pen.poly(pts, fill=MOUTH_DARK, outline=INK, width=lw * 0.9)
+        pen.ellipse(mx, my + mw * 0.42, mw * 0.3, mw * 0.17, fill=hex_rgba('#E8838A'))
     elif mouth == 'smile':
         pen.arc(mx, my - mw * 0.5, mw * 0.9, mw * 0.8, 25, 155, INK, lw)
     elif mouth == 'open_smile':
@@ -949,14 +1048,17 @@ def _face(pen, look, hc, r, f, a, emotion, mouth_open, blink, t, u):
 
 def _wear_head(pen, look, hc, r, f, u):
     cx, cy = hc
+    mascot = look.style == 'chibi' and not look.entity
     if 'glasses' in look.wear:
-        fx = cx + f * r * 0.22
-        gap = r * 0.34
+        fx = cx + f * r * (0.1 if mascot else 0.22)
+        gap = r * (0.32 if mascot else 0.34)
+        gy = cy + (r * 0.06 if mascot else -r * 0.08)
+        gw = r * (0.045 if mascot else 0.07)
         for s in (-1, 1):
-            pen.circle(fx + s * gap, cy - r * 0.08, r * 0.27, outline=INK, width=r * 0.07)
-        pen.line([(fx - gap + r * 0.27, cy - r * 0.1), (fx + gap - r * 0.27, cy - r * 0.1)], INK, r * 0.07)
+            pen.circle(fx + s * gap, gy, r * 0.22 if mascot else r * 0.27, outline=INK, width=gw)
+        pen.line([(fx - gap + r * 0.22, gy - r * 0.02), (fx + gap - r * 0.22, gy - r * 0.02)], INK, gw)
     if 'mustache' in look.wear:
-        fx = cx + f * r * 0.26
+        fx = cx + f * r * (0.12 if mascot else 0.26)
         for s in (-1, 1):
             pen.ellipse(fx + s * r * 0.14, cy + r * 0.3, r * 0.16, r * 0.07, fill=look.hair_color)
     if 'cap' in look.wear or 'bus_cap' in look.wear:
