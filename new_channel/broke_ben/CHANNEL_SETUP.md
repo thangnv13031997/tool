@@ -175,3 +175,15 @@ Gợi ý kịch bản trailer (khoảng 45 giây):
 - [ ] Tạo 6 danh sách phát ở mục 7
 - [ ] Chọn ngôn ngữ kênh: English; quốc gia: Vietnam
 - [ ] Xong các bước trên thì bắt đầu làm tool **Money Studio**: dùng `flatkit.py` làm lõi vẽ, video đầu tiên là trailer.
+
+---
+
+## 11. Nhân vật bản 2 (đang chọn)
+
+`make_branding_v2.py` dùng `charkit.py`: hình vẽ bằng đường cong mượt, đổ bóng hai tông, viền dán đều. Có hai phương án, mỗi phương án đủ avatar, banner, watermark và ảnh kiểm tra:
+
+- `branding/option_A_ben/`: Ben dáng chibi, áo hoodie xanh
+- `branding/option_B_piggy/`: Piggy Ben, heo đất bị nứt dán băng cá nhân (đúng chữ "broke")
+- `branding/COMPARE_v2.jpg`: hai phương án đặt cạnh nhau
+
+Các file ở thư mục gốc `branding/` là bản 1 (người que), giữ lại để so sánh.
