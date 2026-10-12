@@ -23,6 +23,7 @@ import tkinter as tk                              # noqa: E402
 from tkinter import ttk, filedialog, messagebox   # noqa: E402
 
 CFG_PATH = os.path.join(ROOT, 'config.json')
+CFG_EXAMPLE = os.path.join(ROOT, 'config.example.json')
 SCRIPTS = os.path.join(ROOT, 'scripts')
 OUTPUT = os.path.join(ROOT, 'output')
 NOTES = os.path.join(ROOT, 'notes', 'IMPROVEMENTS.md')
@@ -43,11 +44,20 @@ GENRES = ['rules horror (danh sách luật lạ)', 'night shift (ca đêm)', 'st
 
 
 def load_cfg():
-    try:
-        with open(CFG_PATH, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception:
-        return {}
+    """config.example.json làm mặc định, config.json (riêng trên máy, không đưa lên git) ghi đè lên."""
+    cfg = {}
+    for p in (CFG_EXAMPLE, CFG_PATH):
+        try:
+            with open(p, 'r', encoding='utf-8') as f:
+                cfg.update(json.load(f))
+        except Exception:
+            pass
+    if not os.path.exists(CFG_PATH) and cfg:
+        try:
+            save_cfg(cfg)
+        except Exception:
+            pass
+    return cfg
 
 
 def save_cfg(cfg):

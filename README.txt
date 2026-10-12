@@ -65,3 +65,7 @@ CẤU HÌNH (config.json)
 - anthropic_api_key, claude_model : chỉ cần nếu dùng viết kịch bản tự động
 
 Bản quyền font: Anton, Oswald, Creepster (SIL OFL 1.1), Special Elite (Apache 2.0). Đều dùng thương mại được.
+
+GIT / GITHUB
+- config.json, env, output, logs, library\_generated không đưa lên GitHub (xem .gitignore).
+- Giá trị mặc định nằm ở config.example.json; config.json tự tạo khi mở app lần đầu. Đừng ghi API key vào config.example.json.
