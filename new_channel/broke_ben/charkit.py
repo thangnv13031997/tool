@@ -66,6 +66,23 @@ def eye(p, x, y, rx=21, ry=29, look=(0, 0)):
     p.circle(hx - rx * 0.3, hy + ry * 0.38, rx * 0.17, (255, 255, 255))
 
 
+def closed_eye(p, x, y, rx=21):
+    p.arc((x - rx, y - rx * 0.6, x + rx, y + rx * 0.9), 200, 340, 8, OUTLINE)
+
+
+def mouth(sp, cx, cy, w, h, mood, open_):
+    """mood smile/shock; open_=False gives the closed frame used between syllables."""
+    p = sp.pen
+    if mood == 'shock':
+        k = 1.0 if open_ else 0.55
+        sp.part(lambda q: q.ellipse((cx - w * 0.45, cy + 2, cx + w * 0.45, cy + 2 + h * 1.25 * k), (107, 34, 48)),
+                outline=4)
+    elif open_:
+        open_smile(sp, cx, cy, w, h)
+    else:
+        p.arc((cx - w * 0.8, cy - h * 0.9, cx + w * 0.8, cy + h * 0.6), 25, 155, 8, OUTLINE)
+
+
 def brow(p, a, b, w=12):
     p.line([a, ((a[0] + b[0]) / 2, min(a[1], b[1]) - 6), b], w, OUTLINE)
 
@@ -88,7 +105,7 @@ HOOD, HOOD_SH, HOOD_HI = (63, 163, 107), (44, 128, 82), (110, 200, 145)
 PANTS, PANTS_SH = (44, 58, 94), (32, 42, 70)
 
 
-def ben(pose='idle', mood='smile', scale=1):
+def ben(pose='idle', mood='smile', scale=1, blink=False, talk=True):
     sp = Sprite(600, 780, scale)
     p = sp.pen
     lay = p.layer()                                   # ground shadow
@@ -168,7 +185,7 @@ def ben(pose='idle', mood='smile', scale=1):
     # face
     look = (1, 0) if pose == 'point' else (0, 0)
     for x in (246, 354):
-        eye(p, x, 288, look=look)
+        closed_eye(p, x, 288) if blink else eye(p, x, 288, look=look)
     if mood == 'shock':
         brow(p, (214, 218), (272, 214))
         brow(p, (328, 214), (386, 218))
@@ -180,11 +197,7 @@ def ben(pose='idle', mood='smile', scale=1):
         blush.ellipse((x - 28, 330, x + 28, 348), BLUSH)
     p.paste(blush, blur=2)
     p.arc((290, 300, 310, 322), 20, 160, 5, SKIN_SH)
-    if mood == 'shock':
-        sp.part(lambda q: q.ellipse((282, 340, 318, 384), (107, 34, 48)),
-                lambda q: q.ellipse((286, 366, 314, 392), (255, 122, 138)), outline=4)
-    else:
-        open_smile(sp, 300, 338, 40, 36)
+    mouth(sp, 300, 338, 40, 36, mood, talk)
 
     # front arm on top
     a, b, c = front
@@ -201,7 +214,7 @@ def ben(pose='idle', mood='smile', scale=1):
 PINK, PINK_SH, PINK_HI, PINK_DK = (255, 168, 186), (238, 128, 154), (255, 214, 224), (163, 64, 91)
 
 
-def piggy(mood='smile', scale=1):
+def piggy(mood='smile', scale=1, blink=False, talk=True):
     sp = Sprite(700, 640, scale)
     p = sp.pen
     lay = p.layer()
@@ -244,7 +257,7 @@ def piggy(mood='smile', scale=1):
     p.paste(ba, rotate=-62, center=(cx, cy))
     # face
     for x in (272, 428):
-        eye(p, x, 320, rx=23, ry=31)
+        closed_eye(p, x, 320, 23) if blink else eye(p, x, 320, rx=23, ry=31)
     brow(p, (240, 262), (296, 254))
     brow(p, (404, 254), (460, 262))
     blush = p.layer()
@@ -255,8 +268,5 @@ def piggy(mood='smile', scale=1):
             lambda q: q.ellipse((278, 380, 422, 452), (246, 170, 186)), outline=6)
     for x in (322, 378):
         p.ellipse((x - 11, 380, x + 11, 414), PINK_DK)
-    if mood == 'shock':
-        sp.part(lambda q: q.ellipse((334, 456, 366, 492), (107, 34, 48)), outline=4)
-    else:
-        open_smile(sp, 350, 458, 34, 28)
+    mouth(sp, 350, 458, 34, 28, mood, talk)
     return sp.done()
