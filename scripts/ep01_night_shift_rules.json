@@ -1,0 +1,1771 @@
+{
+ "format": "horror_studio_v1",
+ "title": "My Night Shift Had 7 Rules. Rule 7 Was Crossed Out.",
+ "target_minutes": 7,
+ "narrator": {
+  "voice": "af_heart",
+  "speed": 0.97
+ },
+ "cast": [
+  {
+   "name": "Mia",
+   "role": "main",
+   "gender": "female",
+   "age": "adult",
+   "hair": "ponytail",
+   "hair_color": "#4A2E1E",
+   "outfit": "hoodie",
+   "outfit_color": "#6B2D3A",
+   "pants_color": "#2A3344",
+   "voice": "af_heart"
+  },
+  {
+   "name": "Mr. Long",
+   "type": "driver",
+   "role": "host",
+   "voice": "bm_george",
+   "voice_fx": "deep_reverb"
+  },
+  {
+   "name": "Dale",
+   "gender": "male",
+   "age": "elder",
+   "hair": "short",
+   "outfit": "flannel",
+   "outfit_color": "#5A2A22",
+   "pants_color": "#3A3A2E",
+   "wear": [
+    "beard",
+    "cap"
+   ],
+   "voice": "am_fenrir"
+  },
+  {
+   "name": "The Man",
+   "type": "raincoat_man",
+   "voice": "bm_lewis",
+   "voice_fx": "creepy"
+  },
+  {
+   "name": "Trucker",
+   "gender": "male",
+   "outfit": "jacket",
+   "outfit_color": "#3A4A5A",
+   "wear": [
+    "cap",
+    "beard"
+   ],
+   "hair_color": "#5A3A22",
+   "voice": "am_michael"
+  },
+  {
+   "name": "Dale In The Rain",
+   "type": "raincoat_man",
+   "wear": [
+    "beard"
+   ],
+   "hair_color": "#A8A8A8",
+   "voice": "am_fenrir",
+   "voice_fx": "distant"
+  }
+ ],
+ "youtube": {
+  "title_options": [
+   "My Night Shift Had 7 Rules. Rule 7 Was Crossed Out.",
+   "I Worked a Gas Station Night Shift With Strange Rules",
+   "Never Sell Anything to the Man in the Yellow Raincoat",
+   "My Boss Left Me a List of Rules. One Was Missing."
+  ],
+  "description": "Mia took the night shift at a lonely gas station for one summer. Her boss gave her seven rules. The last one was crossed out.\n\nBus 13 only stops for passengers with a story. Tonight's passenger still smells like rain.",
+  "tags": [
+   "scary stories",
+   "horror stories",
+   "animated horror stories",
+   "night shift horror",
+   "gas station horror",
+   "rules horror",
+   "creepy stories",
+   "scary animation",
+   "bus 13"
+  ],
+  "hashtags": [
+   "horrorstories",
+   "scarystories",
+   "animation",
+   "nightshift"
+  ],
+  "category": "Film & Animation",
+  "channel": "Bus 13: Night Route",
+  "pinned_comment": "What would you have done when the phone rang at 3:07? Next passenger boards Friday.",
+  "thumbnail": {
+   "variants": [
+    {
+     "layout": "face_threat",
+     "text": "RULE 7 WAS *GONE*",
+     "bg": "gas_station",
+     "accent": "red",
+     "char": {
+      "name": "Mia",
+      "pose": "terrified",
+      "emotion": "terrified"
+     },
+     "threat": {
+      "name": "The Man",
+      "pose": "loom"
+     },
+     "threat_x": 0.8,
+     "threat_y": 0.1
+    },
+    {
+     "layout": "object",
+     "text": "DON'T *SELL* TO HIM",
+     "bg": "store_night",
+     "accent": "yellow",
+     "prop": {
+      "type": "rules",
+      "rules": [
+       "1. Lock the door at 2",
+       "2. Lights flicker? Hide",
+       "3. No yellow raincoat",
+       "4. Phone at 3:07? No",
+       "7. ~~~~~~~~~~~~"
+      ],
+      "highlight": 2,
+      "strike": 4
+     },
+     "char": {
+      "name": "Mia",
+      "pose": "cover_mouth",
+      "emotion": "terrified"
+     },
+     "threat": "eyes",
+     "threat_x": 0.9,
+     "threat_y": 0.2
+    },
+    {
+     "layout": "split",
+     "text": "*3:07* AM",
+     "bg": "gas_station",
+     "accent": "red",
+     "char": {
+      "name": "Mia",
+      "pose": "scared",
+      "emotion": "scared"
+     },
+     "threat": {
+      "name": "The Man",
+      "pose": "loom",
+      "scale": 1.1
+     },
+     "threat_x": 0.86,
+     "threat_y": 0.3
+    }
+   ]
+  }
+ },
+ "shorts": {
+  "scenes": [
+   1,
+   2,
+   3,
+   9,
+   10,
+   11,
+   21,
+   22
+  ],
+  "hook_text": "Rule 3: Never sell to him",
+  "end_text": "The full story is on the channel"
+ },
+ "scenes": [
+  {
+   "purpose": "hook",
+   "chapter": "The Man in the Raincoat",
+   "bg": "gas_station",
+   "time": "night",
+   "weather": "rain",
+   "mood": "dread",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "The Man",
+     "x": 0.56,
+     "y": 0.6,
+     "scale": 0.38,
+     "pose": "stand_far",
+     "far": true
+    }
+   ],
+   "props": [
+    {
+     "type": "cctv",
+     "text": "03:07:14 AM",
+     "cam": "PUMP 4"
+    }
+   ],
+   "lines": [
+    {
+     "text": "I worked the night shift at a gas station for *one* summer.",
+     "delivery": "tense"
+    }
+   ]
+  },
+  {
+   "purpose": "hook",
+   "camera": "push_in",
+   "focus": [
+    0.56,
+    0.55
+   ],
+   "chars": "same",
+   "props": [
+    {
+     "type": "cctv",
+     "text": "03:07:19 AM",
+     "cam": "PUMP 4"
+    }
+   ],
+   "lines": [
+    {
+     "text": "I quit the night the man in the *yellow raincoat* came back.",
+     "delivery": "slow"
+    }
+   ],
+   "scare": {
+    "type": "stinger",
+    "after_line": 0
+   }
+  },
+  {
+   "purpose": "hook",
+   "bg": "store_counter",
+   "lights": "flicker",
+   "camera": "close",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "cover_mouth",
+     "emotion": "terrified"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "glass_tap",
+     "at_line": 0
+    }
+   ],
+   "lines": [
+    {
+     "text": "Because by then, I knew what he really wanted.",
+     "delivery": "whisper"
+    }
+   ]
+  },
+  {
+   "purpose": "host_intro",
+   "bg": "bus_interior",
+   "lights": "on",
+   "weather": "clear",
+   "mood": "host",
+   "camera": "drift",
+   "transition": "fade",
+   "chars": [
+    {
+     "name": "Mr. Long",
+     "x": 0.3,
+     "pose": "drive",
+     "facing": "right"
+    },
+    {
+     "name": "Mia",
+     "x": 0.7,
+     "pose": "sit",
+     "emotion": "uneasy",
+     "facing": "left"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "bus_brakes",
+     "at": 0.1
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Mr. Long",
+     "text": "Bus thirteen. Tonight's passenger... still smells like rain.",
+     "delivery": "slow"
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "chapter": "The Job",
+   "bg": "suburban_street",
+   "time": "dusk",
+   "mood": "calm_normal",
+   "camera": "pan_right",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.35,
+     "pose": "phone",
+     "emotion": "tired"
+    }
+   ],
+   "lines": [
+    {
+     "text": "It was the summer before my second year of college, and I was broke."
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "camera": "slow_push",
+   "chars": "same",
+   "props": [
+    {
+     "type": "chat",
+     "contact": "Dale (Gas Station)",
+     "messages": [
+      {
+       "from": "them",
+       "text": "Night clerk needed. 10pm to 6am. $22 an hour."
+      },
+      {
+       "from": "me",
+       "text": "Is that a typo?? I'm interested!"
+      },
+      {
+       "from": "them",
+       "text": "No typo. Can you start tomorrow?"
+      }
+     ],
+     "message_gap": 1.4
+    }
+   ],
+   "sfx": [
+    {
+     "name": "notification",
+     "at": 0.2
+    },
+    {
+     "name": "notification",
+     "at": 1.6
+    },
+    {
+     "name": "notification",
+     "at": 3.0
+    }
+   ],
+   "lines": [
+    {
+     "text": "So when a gas station two miles outside town offered twenty-two dollars an hour..."
+    },
+    {
+     "text": "I didn't ask *why*.",
+     "delivery": "deadpan"
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "bg": "gas_station",
+   "time": "night",
+   "camera": "pull_out",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "idle",
+     "emotion": "calm",
+     "enter": "left"
+    },
+    {
+     "name": "Dale",
+     "x": 0.62,
+     "pose": "wave",
+     "emotion": "happy"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "car_door",
+     "at": 0.1
+    }
+   ],
+   "lines": [
+    {
+     "text": "The owner was an old man named Dale. Flannel shirt, big beard, firm handshake."
+    },
+    {
+     "speaker": "Dale",
+     "text": "You must be Mia. Come on in, kid.",
+     "delivery": "warm"
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "bg": "store_night",
+   "lights": "on",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "Dale",
+     "x": 0.35,
+     "pose": "explain"
+    },
+    {
+     "name": "Mia",
+     "x": 0.68,
+     "pose": "idle",
+     "emotion": "calm"
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Dale",
+     "text": "Register, coffee, hot dogs. Truckers mostly. Easy money.",
+     "delivery": "warm"
+    },
+    {
+     "text": "Then he handed me a piece of paper."
+    }
+   ]
+  },
+  {
+   "purpose": "open_loop",
+   "chapter": "The Rules",
+   "camera": "static",
+   "mood": "uneasy",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "read",
+     "emotion": "confused"
+    }
+   ],
+   "props": [
+    {
+     "type": "rules",
+     "title": "NIGHT RULES",
+     "rules": [
+      "1. Lock the door at 2 AM. Serve through the window.",
+      "2. Lights flicker 3 times? Back room. Count to 60.",
+      "3. NEVER sell anything to a man in a yellow raincoat.",
+      "4. If the phone rings at 3:07, do not answer.",
+      "5. Don't watch the pump 4 camera after 3 AM.",
+      "6. Dawn comes at 5:52. Wait for it.",
+      "7. ~~~~~~~~~~~~~~~~~~~~~~~~"
+     ],
+     "strike": 6,
+     "scale": 1.15
+    }
+   ],
+   "sfx": [
+    {
+     "name": "whoosh",
+     "at": 0.1
+    }
+   ],
+   "lines": [
+    {
+     "text": "Seven rules. Typed. Laminated."
+    },
+    {
+     "text": "And the seventh one was scribbled out so hard the pen had torn the paper.",
+     "delivery": "slow"
+    }
+   ]
+  },
+  {
+   "purpose": "open_loop",
+   "camera": "push_in",
+   "chars": [
+    {
+     "name": "Dale",
+     "x": 0.35,
+     "pose": "cross_arms",
+     "emotion": "uneasy"
+    },
+    {
+     "name": "Mia",
+     "x": 0.68,
+     "pose": "talk",
+     "emotion": "confused"
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Mia",
+     "text": "What's rule seven?"
+    },
+    {
+     "speaker": "Dale",
+     "text": "Don't worry about seven.",
+     "delivery": "cold"
+    }
+   ]
+  },
+  {
+   "purpose": "open_loop",
+   "camera": "close",
+   "focus": [
+    0.5,
+    0.45
+   ],
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "hug_self",
+     "emotion": "uneasy"
+    }
+   ],
+   "lines": [
+    {
+     "text": "I should have worried about seven.",
+     "delivery": "whisper",
+     "pause_after": 0.8
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "chapter": "Night One",
+   "bg": "gas_station",
+   "mood": "calm_normal",
+   "camera": "drift",
+   "transition": "fade",
+   "props": [
+    {
+     "type": "card",
+     "text": "NIGHT ONE",
+     "until_line": 0
+    }
+   ],
+   "lines": [
+    {
+     "text": "The first night was... honestly boring."
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "bg": "store_night",
+   "camera": "pan_left",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.6,
+     "pose": "sit_phone",
+     "emotion": "tired"
+    }
+   ],
+   "lines": [
+    {
+     "text": "My only company was a hot dog roller and a radio that only played country songs about trucks."
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "Trucker",
+     "x": 0.72,
+     "pose": "talk",
+     "enter": "right"
+    },
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "idle",
+     "emotion": "happy",
+     "facing": "right"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "bell",
+     "at": 0.2,
+     "volume": 0.5
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Trucker",
+     "text": "Coffee, black. You're the new girl at Dale's?"
+    },
+    {
+     "speaker": "Mia",
+     "text": "First night."
+    }
+   ],
+   "bg": "store_counter"
+  },
+  {
+   "purpose": "red_flag",
+   "camera": "close",
+   "chars": [
+    {
+     "name": "Trucker",
+     "x": 0.72,
+     "pose": "idle",
+     "emotion": "uneasy"
+    },
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "idle",
+     "emotion": "confused",
+     "facing": "right"
+    }
+   ],
+   "mood": "uneasy",
+   "lines": [
+    {
+     "speaker": "Trucker",
+     "text": "Huh. Dale's still hiring.",
+     "delivery": "deadpan"
+    },
+    {
+     "text": "He left a twenty dollar tip and didn't wait for his change."
+    }
+   ]
+  },
+  {
+   "purpose": "red_flag",
+   "camera": "close",
+   "chars": [
+    {
+     "name": "Trucker",
+     "x": 0.72,
+     "pose": "point",
+     "emotion": "uneasy"
+    },
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "idle",
+     "emotion": "uneasy",
+     "facing": "right"
+    }
+   ],
+   "lines": [
+    {
+     "text": "On his way out, he tapped the rules taped to the register. Rule three."
+    },
+    {
+     "speaker": "Trucker",
+     "text": "Yellow coat shows up, you stay behind the glass. Hear me?",
+     "delivery": "tense"
+    }
+   ]
+  },
+  {
+   "purpose": "setup",
+   "bg": "gas_station",
+   "camera": "pull_out",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.2,
+     "pose": "idle",
+     "emotion": "calm",
+     "far": false
+    }
+   ],
+   "props": [
+    {
+     "type": "clock",
+     "text": "2:00",
+     "x": 0.84,
+     "y": 0.18,
+     "scale": 0.8
+    }
+   ],
+   "sfx": [
+    {
+     "name": "switch",
+     "at_line": 0
+    }
+   ],
+   "lines": [
+    {
+     "text": "At two, I locked the door, like rule one said. Nothing happened."
+    },
+    {
+     "text": "At six, the sun came up, and I drove home feeling *stupid*."
+    }
+   ]
+  },
+  {
+   "purpose": "red_flag",
+   "chapter": "3:07",
+   "bg": "store_counter",
+   "lights": "on",
+   "mood": "uneasy",
+   "camera": "drift",
+   "transition": "fade",
+   "props": [
+    {
+     "type": "card",
+     "text": "NIGHT TWO",
+     "until_line": 0
+    }
+   ],
+   "lines": [
+    {
+     "text": "Night two is when the phone rang."
+    }
+   ]
+  },
+  {
+   "purpose": "red_flag",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.33,
+     "pose": "sit",
+     "emotion": "uneasy",
+     "facing": "right"
+    }
+   ],
+   "props": [
+    {
+     "type": "clock",
+     "text": "3:07",
+     "x": 0.13,
+     "y": 0.3,
+     "scale": 1.1
+    }
+   ],
+   "sfx": [
+    {
+     "name": "phone_buzz",
+     "at": 0.3
+    },
+    {
+     "name": "phone_buzz",
+     "at": 2.2
+    }
+   ],
+   "lines": [
+    {
+     "text": "Not my cell. The old wall phone behind the counter."
+    },
+    {
+     "text": "Three oh seven. On the dot.",
+     "delivery": "tense"
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "mood": "tension_rise",
+   "camera": "push_in",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.33,
+     "pose": "freeze",
+     "emotion": "scared"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "phone_buzz",
+     "at": 0.1
+    },
+    {
+     "name": "phone_buzz",
+     "at": 2.0
+    },
+    {
+     "name": "phone_buzz",
+     "at": 3.9
+    }
+   ],
+   "lines": [
+    {
+     "text": "Rule four. Do not answer."
+    },
+    {
+     "text": "It rang thirteen times. I counted every single one.",
+     "delivery": "scared"
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "camera": "close",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.33,
+     "pose": "phone",
+     "emotion": "worried"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Then it stopped. And the answering machine clicked on."
+    }
+   ],
+   "sfx": [
+    {
+     "name": "switch",
+     "after_line": 0
+    }
+   ]
+  },
+  {
+   "purpose": "red_flag",
+   "mood": "dread",
+   "camera": "extreme_close",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.33,
+     "pose": "cover_mouth",
+     "emotion": "terrified"
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Mia",
+     "text": "Mia... it's me. Open the door. It's cold out here.",
+     "fx": "phone+creepy",
+     "delivery": "slow"
+    },
+    {
+     "text": "It was *my* voice.",
+     "delivery": "whisper",
+     "pause_after": 0.7
+    }
+   ],
+   "scare": {
+    "type": "glitch",
+    "after_line": 0
+   }
+  },
+  {
+   "purpose": "rehook",
+   "mood": "dread",
+   "camera": "slow_push",
+   "bg": "store_night",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.4,
+     "pose": "hug_self",
+     "emotion": "scared",
+     "facing": "right"
+    }
+   ],
+   "props": [
+    {
+     "type": "clock",
+     "text": "3:07",
+     "x": 0.72,
+     "y": 0.4,
+     "scale": 1.1
+    }
+   ],
+   "sfx": [
+    {
+     "name": "whispers",
+     "at": 0.5,
+     "volume": 0.5
+    }
+   ],
+   "lines": [
+    {
+     "text": "The message was thirteen seconds long."
+    },
+    {
+     "text": "And in the background, you could hear rain. It wasn't raining.",
+     "delivery": "whisper",
+     "pause_after": 0.6
+    }
+   ]
+  },
+  {
+   "purpose": "breather",
+   "bg": "suburban_street",
+   "time": "day",
+   "mood": "aftermath",
+   "camera": "drift",
+   "transition": "fade",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "call",
+     "emotion": "worried"
+    }
+   ],
+   "lines": [
+    {
+     "text": "In the morning I called Dale. He was quiet for a long time."
+    },
+    {
+     "speaker": "Dale",
+     "text": "You didn't answer. Good girl. Then you're fine.",
+     "fx": "phone",
+     "delivery": "calm"
+    }
+   ]
+  },
+  {
+   "purpose": "rehook",
+   "chapter": "Count to Sixty",
+   "bg": "store_night",
+   "time": "night",
+   "lights": "flicker",
+   "mood": "tension_rise",
+   "camera": "drift",
+   "props": [
+    {
+     "type": "card",
+     "text": "NIGHT THREE",
+     "until_line": 0
+    }
+   ],
+   "transition": "fade",
+   "lines": [
+    {
+     "text": "I almost didn't go back. But twenty-two dollars an hour..."
+    }
+   ]
+  },
+  {
+   "purpose": "rehook",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "hug_self",
+     "emotion": "scared"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "switch",
+     "at": 0.6
+    },
+    {
+     "name": "switch",
+     "at": 1.2
+    },
+    {
+     "name": "switch",
+     "at": 1.8
+    }
+   ],
+   "lines": [
+    {
+     "text": "At two forty, the lights flickered. Once. Twice."
+    },
+    {
+     "text": "Three times.",
+     "delivery": "whisper"
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "bg": "basement",
+   "lights": "on",
+   "mood": "dread",
+   "camera": "close",
+   "focus": [
+    0.45,
+    0.5
+   ],
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.45,
+     "pose": "hide",
+     "emotion": "terrified"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Back room. Door shut. Count to sixty.",
+     "delivery": "scared"
+    },
+    {
+     "speaker": "Mia",
+     "text": "One... two... three...",
+     "delivery": "whisper"
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "camera": "push_in",
+   "chars": "same",
+   "sfx": [
+    {
+     "name": "footsteps",
+     "at": 0.3,
+     "volume": 0.6
+    }
+   ],
+   "lines": [
+    {
+     "text": "Around twenty, I heard footsteps out in the store."
+    },
+    {
+     "text": "Slow ones. Walking the aisles. Wet shoes squeaking on the tile."
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "camera": "extreme_close",
+   "focus": [
+    0.45,
+    0.48
+   ],
+   "chars": "same",
+   "sfx": [
+    {
+     "name": "whispers",
+     "at": 0.2,
+     "volume": 0.7
+    }
+   ],
+   "lines": [
+    {
+     "text": "Then humming. Right on the other side of the door.",
+     "delivery": "whisper"
+    },
+    {
+     "speaker": "Mia",
+     "text": "Forty one... forty two...",
+     "delivery": "whisper"
+    }
+   ]
+  },
+  {
+   "purpose": "scare",
+   "lights": "on",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.45,
+     "pose": "hide",
+     "emotion": "terrified"
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Mia",
+     "text": "Fifty nine... sixty.",
+     "delivery": "whisper"
+    }
+   ],
+   "scare": {
+    "type": "lights_out",
+    "after_line": 0
+   }
+  },
+  {
+   "purpose": "red_flag",
+   "bg": "store_night",
+   "lights": "on",
+   "mood": "uneasy",
+   "camera": "pan_right",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.28,
+     "pose": "sneak",
+     "emotion": "scared"
+    }
+   ],
+   "props": [
+    {
+     "type": "footprints",
+     "x": 0.62,
+     "y": 0.9,
+     "scale": 1.3
+    }
+   ],
+   "lines": [
+    {
+     "text": "The store was empty. Front door still locked."
+    },
+    {
+     "text": "But there were *wet footprints*. From the door to the coffee machine."
+    }
+   ]
+  },
+  {
+   "purpose": "rehook",
+   "camera": "close",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "freeze",
+     "emotion": "terrified"
+    }
+   ],
+   "props": [
+    {
+     "type": "coffee",
+     "x": 0.45,
+     "y": 0.655,
+     "scale": 1.3
+    }
+   ],
+   "lines": [
+    {
+     "text": "And on the counter sat one cup of coffee. Freshly poured. Still steaming."
+    },
+    {
+     "text": "Someone had served *himself*.",
+     "delivery": "slow",
+     "pause_after": 0.7
+    }
+   ],
+   "bg": "store_counter"
+  },
+  {
+   "purpose": "rehook",
+   "camera": "push_in",
+   "bg": "office_night",
+   "lights": "off",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.42,
+     "pose": "type",
+     "emotion": "scared"
+    }
+   ],
+   "props": [
+    {
+     "type": "cctv",
+     "text": "02:40:00 AM",
+     "cam": "STORE"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "static_burst",
+     "at_line": 1
+    }
+   ],
+   "lines": [
+    {
+     "text": "I checked the security footage."
+    },
+    {
+     "text": "From two forty to two forty one, every camera showed the same thing. *Static*.",
+     "delivery": "slow"
+    }
+   ],
+   "scare": {
+    "type": "glitch",
+    "at_line": 1
+   }
+  },
+  {
+   "purpose": "red_flag",
+   "chapter": "The Yellow Raincoat",
+   "bg": "gas_station",
+   "weather": "rain",
+   "mood": "uneasy",
+   "camera": "drift",
+   "transition": "fade",
+   "props": [
+    {
+     "type": "card",
+     "text": "NIGHT FOUR",
+     "until_line": 0
+    }
+   ],
+   "lines": [
+    {
+     "text": "Night four, it rained. The kind of rain that hums on the roof."
+    }
+   ]
+  },
+  {
+   "purpose": "red_flag",
+   "camera": "slow_push",
+   "focus": [
+    0.56,
+    0.55
+   ],
+   "chars": [
+    {
+     "name": "The Man",
+     "x": 0.56,
+     "y": 0.6,
+     "scale": 0.38,
+     "pose": "stand_far",
+     "far": true
+    }
+   ],
+   "lines": [
+    {
+     "text": "At three, someone walked out of the trees. No car. No flashlight."
+    },
+    {
+     "text": "A tall man in a *yellow raincoat*.",
+     "delivery": "slow"
+    }
+   ]
+  },
+  {
+   "purpose": "red_flag",
+   "camera": "close",
+   "focus": [
+    0.56,
+    0.5
+   ],
+   "bg": "gas_station",
+   "chars": [
+    {
+     "name": "The Man",
+     "x": 0.56,
+     "y": 0.66,
+     "scale": 0.6,
+     "pose": "stand_far",
+     "emotion": "blank"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Rain was pouring off his coat. But the concrete around his boots..."
+    },
+    {
+     "text": "was completely *dry*.",
+     "delivery": "whisper",
+     "pause_after": 0.6
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "bg": "front_door",
+   "lights": "on",
+   "mood": "tension_rise",
+   "camera": "push_in",
+   "chars": [
+    {
+     "name": "The Man",
+     "x": 0.5,
+     "pose": "loom",
+     "emotion": "blank"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "glass_tap",
+     "at": 0.2
+    }
+   ],
+   "lines": [
+    {
+     "text": "He came right up to the service window and tapped on the glass."
+    },
+    {
+     "speaker": "The Man",
+     "text": "Is the coffee fresh?",
+     "delivery": "creepy"
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "bg": "store_counter",
+   "camera": "close",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "back_away",
+     "emotion": "terrified",
+     "facing": "right"
+    },
+    {
+     "name": "The Man",
+     "x": 0.74,
+     "pose": "stand_far",
+     "scale": 0.8,
+     "y": 0.74,
+     "facing": "left"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Rule three. Never sell anything to a man in a yellow raincoat."
+    },
+    {
+     "speaker": "Mia",
+     "text": "Sorry. Machine's broken.",
+     "delivery": "scared"
+    }
+   ]
+  },
+  {
+   "purpose": "tension",
+   "bg": "front_door",
+   "camera": "close",
+   "focus": [
+    0.5,
+    0.35
+   ],
+   "chars": [
+    {
+     "name": "The Man",
+     "x": 0.5,
+     "pose": "loom",
+     "emotion": "creepy_smile"
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "The Man",
+     "text": "Dale always gave me coffee.",
+     "delivery": "creepy"
+    },
+    {
+     "speaker": "The Man",
+     "text": "Dale was *nice*.",
+     "delivery": "creepy"
+    }
+   ]
+  },
+  {
+   "purpose": "red_flag",
+   "bg": "store_night",
+   "mood": "dread",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.3,
+     "pose": "flashlight",
+     "emotion": "terrified",
+     "facing": "right"
+    }
+   ],
+   "lines": [
+    {
+     "text": "I backed away from the window. Rule five said don't watch the pump camera after three."
+    },
+    {
+     "text": "I watched it anyway.",
+     "delivery": "deadpan"
+    }
+   ]
+  },
+  {
+   "purpose": "rehook",
+   "bg": "gas_station",
+   "camera": "push_in",
+   "focus": [
+    0.56,
+    0.55
+   ],
+   "chars": [
+    {
+     "name": "The Man",
+     "x": 0.56,
+     "y": 0.6,
+     "scale": 0.38,
+     "pose": "stand_far",
+     "far": true
+    }
+   ],
+   "props": [
+    {
+     "type": "cctv",
+     "text": "03:12:40 AM",
+     "cam": "PUMP 4"
+    }
+   ],
+   "lines": [
+    {
+     "text": "He was standing at pump four. Staring right into the camera."
+    }
+   ]
+  },
+  {
+   "purpose": "rehook",
+   "camera": "extreme_close",
+   "focus": [
+    0.56,
+    0.55
+   ],
+   "chars": "same",
+   "props": [
+    {
+     "type": "cctv",
+     "text": "03:12:44 AM",
+     "cam": "PUMP 4"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Which was impossible."
+    },
+    {
+     "text": "Because he was *also* still tapping on my window.",
+     "delivery": "whisper"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "glass_tap",
+     "at_line": 1
+    }
+   ]
+  },
+  {
+   "purpose": "scare",
+   "bg": "front_door",
+   "lights": "flicker",
+   "camera": "close",
+   "focus": [
+    0.5,
+    0.4
+   ],
+   "chars": [
+    {
+     "name": "The Man",
+     "x": 0.5,
+     "pose": "loom",
+     "emotion": "creepy_smile"
+    }
+   ],
+   "lines": [
+    {
+     "text": "I turned around slowly.",
+     "delivery": "whisper"
+    }
+   ],
+   "scare": {
+    "type": "jumpscare",
+    "entity": "smile",
+    "after_line": 0,
+    "silence": 0.9
+   }
+  },
+  {
+   "purpose": "climax",
+   "chapter": "Rule Seven",
+   "bg": "basement",
+   "lights": "on",
+   "mood": "chase",
+   "camera": "shake",
+   "transition": "flash",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "call",
+     "emotion": "terrified"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "heartbeat",
+     "at": 0.1
+    }
+   ],
+   "lines": [
+    {
+     "text": "I ran to the back room and called Dale. He picked up on the first ring.",
+     "delivery": "panic"
+    }
+   ]
+  },
+  {
+   "purpose": "climax",
+   "mood": "tension_rise",
+   "camera": "push_in",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "call",
+     "emotion": "scared"
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Dale",
+     "text": "Mia. Did you read rule seven?",
+     "fx": "phone",
+     "delivery": "slow"
+    },
+    {
+     "speaker": "Mia",
+     "text": "You scratched it out!",
+     "delivery": "shout"
+    }
+   ]
+  },
+  {
+   "purpose": "climax",
+   "camera": "close",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.4,
+     "pose": "phone_light",
+     "emotion": "scared",
+     "facing": "right"
+    }
+   ],
+   "props": [
+    {
+     "type": "note",
+     "text": "7. If Dale calls you\nafter midnight,\nDale is already gone.",
+     "at": 1.0,
+     "tilt": -4,
+     "scale": 1.4
+    }
+   ],
+   "lines": [
+    {
+     "text": "I held the list up to my phone light. You could still read the dents under the ink."
+    },
+    {
+     "text": "Rule seven.",
+     "delivery": "whisper",
+     "pause_after": 0.6
+    }
+   ]
+  },
+  {
+   "purpose": "twist",
+   "mood": "dread",
+   "camera": "extreme_close",
+   "focus": [
+    0.5,
+    0.42
+   ],
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "cover_mouth",
+     "emotion": "terrified"
+    }
+   ],
+   "lines": [
+    {
+     "text": "If Dale calls you after midnight...",
+     "delivery": "slow"
+    },
+    {
+     "text": "Dale is already *gone*.",
+     "delivery": "whisper",
+     "pause_after": 0.9
+    }
+   ]
+  },
+  {
+   "purpose": "twist",
+   "mood": "silence",
+   "camera": "slow_push",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.5,
+     "pose": "call",
+     "emotion": "terrified"
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Dale",
+     "text": "Mia, honey, open the front door. I forgot my keys.",
+     "fx": "phone+creepy",
+     "delivery": "warm"
+    }
+   ],
+   "scare": {
+    "type": "stinger",
+    "after_line": 0
+   }
+  },
+  {
+   "purpose": "twist",
+   "bg": "front_door",
+   "weather": "rain",
+   "lights": "on",
+   "mood": "dread",
+   "camera": "push_in",
+   "focus": [
+    0.5,
+    0.45
+   ],
+   "chars": [
+    {
+     "name": "Dale In The Rain",
+     "x": 0.5,
+     "pose": "loom",
+     "emotion": "creepy_smile"
+    }
+   ],
+   "props": [
+    {
+     "type": "cctv",
+     "text": "03:33:03 AM",
+     "cam": "FRONT DOOR"
+    }
+   ],
+   "lines": [
+    {
+     "text": "On the door camera, Dale was standing outside in the rain."
+    },
+    {
+     "text": "Wearing a *yellow raincoat*.",
+     "delivery": "whisper",
+     "pause_after": 0.8
+    }
+   ]
+  },
+  {
+   "purpose": "ending",
+   "bg": "basement",
+   "lights": "off",
+   "mood": "dread",
+   "camera": "drift",
+   "chars": [
+    {
+     "name": "Mia",
+     "x": 0.45,
+     "pose": "cower",
+     "emotion": "terrified"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "knock",
+     "at": 0.5
+    },
+    {
+     "name": "knock",
+     "at": 3.5
+    }
+   ],
+   "lines": [
+    {
+     "text": "I didn't open the door. I sat in the dark until five fifty two, like rule six said."
+    },
+    {
+     "text": "He knocked the whole time. Politely.",
+     "delivery": "deadpan"
+    }
+   ]
+  },
+  {
+   "purpose": "ending",
+   "bg": "gas_station",
+   "time": "dusk",
+   "weather": "clear",
+   "lights": "on",
+   "mood": "aftermath",
+   "camera": "pull_out",
+   "transition": "fade",
+   "lines": [
+    {
+     "text": "At sunrise, Dale's truck was in the lot. It had been there all night. Cold."
+    },
+    {
+     "text": "Nobody ever found Dale."
+    }
+   ]
+  },
+  {
+   "purpose": "ending",
+   "bg": "store_night",
+   "lights": "on",
+   "camera": "slow_push",
+   "props": [
+    {
+     "type": "rules",
+     "title": "NIGHT RULES",
+     "rules": [
+      "1. Lock the door at 2 AM. Serve through the window.",
+      "3. NEVER sell anything to a man in a yellow raincoat.",
+      "6. Dawn comes at 5:52. Wait for it.",
+      "7. ~~~~~~~~~~~~~~~~~~~~~~~~",
+      "8. Don't let Dale in."
+     ],
+     "highlight": 4,
+     "strike": 3
+    }
+   ],
+   "lines": [
+    {
+     "text": "The station's still open. They're hiring for the night shift."
+    },
+    {
+     "text": "But now the list has *eight* rules. And the last one is in my handwriting.",
+     "delivery": "slow",
+     "pause_after": 0.8
+    }
+   ]
+  },
+  {
+   "purpose": "host_outro",
+   "bg": "bus_interior",
+   "lights": "flicker",
+   "mood": "host",
+   "camera": "slow_push",
+   "transition": "fade",
+   "chars": [
+    {
+     "name": "Mr. Long",
+     "x": 0.32,
+     "pose": "drive",
+     "facing": "right"
+    }
+   ],
+   "sfx": [
+    {
+     "name": "bus_brakes",
+     "at": 0.2
+    },
+    {
+     "name": "door_hiss",
+     "at": 2.4
+    }
+   ],
+   "lines": [
+    {
+     "speaker": "Mr. Long",
+     "text": "She got off at a stop that isn't on any map.",
+     "delivery": "slow"
+    },
+    {
+     "speaker": "Mr. Long",
+     "text": "Next stop... might be *yours*.",
+     "delivery": "slow",
+     "pause_after": 1.0
+    }
+   ]
+  }
+ ]
+}
