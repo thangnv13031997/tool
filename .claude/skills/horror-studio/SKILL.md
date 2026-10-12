@@ -5,7 +5,14 @@ description: Hiểu và lưu repo Horror Studio (tool Python/Tkinter làm video 
 
 # Horror Studio
 
-Tool desktop (Windows, Python + Tkinter) biến kịch bản JSON thành video kinh dị người que kèm Shorts, 3 thumbnail, nội dung YouTube và phụ đề. Trên máy người dùng nằm ở `E:\HorrorStudio`. Giọng đọc dùng Kokoro ở `E:\LocalTTS` (không có trong repo, môi trường cloud không chạy được).
+Tool desktop (Windows, Python + Tkinter) biến kịch bản JSON thành video kinh dị người que kèm Shorts, 3 thumbnail, nội dung YouTube và phụ đề. Giọng đọc dùng Kokoro ở `E:\LocalTTS` (không có trong repo, môi trường cloud không chạy được).
+
+## Phạm vi được sửa (QUAN TRỌNG)
+
+- Chỉ sửa code **trong repo này**: bản trên GitHub/cloud và bản clone trên máy ở `E:\git\tool`.
+- **Không** sửa, ghi đè hay chạy lệnh làm thay đổi bất cứ thứ gì bên ngoài repo, nhất là các bản đang chạy: `E:\HorrorStudio`, `E:\LocalTTS` (Kokoro), `E:\RelatableStudio`, môi trường Python của chúng, lối tắt Desktop.
+- Đường dẫn `E:\HorrorStudio` trong README, code và log là của bản đang chạy: chỉ đọc để tham khảo, không bảo người dùng sửa ở đó.
+- Không tự chạy `setup.bat` hay lệnh cài đặt nào động tới môi trường dùng chung. Muốn đưa thay đổi sang bản đang chạy thì để người dùng tự quyết và tự làm.
 
 ## Cấu trúc
 
@@ -38,9 +45,9 @@ Khi nâng cấp tool: đọc `notes/IMPROVEMENTS.md` trước, cập nhật `doc
 4. `git add -A`, commit với lời nhắn tiếng Việt ngắn gọn mô tả thay đổi (ví dụ "Thêm nền bệnh viện và tư thế bò").
 5. Push lên nhánh đang làm việc: `git push -u origin <nhánh>`. Lỗi mạng thì thử lại tối đa 4 lần (chờ 2s, 4s, 8s, 16s). Không tạo pull request trừ khi người dùng yêu cầu.
 
-## Đồng bộ về máy Windows
+## Đồng bộ về `E:\git\tool`
 
-Commit đã gỡ `env/`, `output/`, `config.json`... khỏi git. Nếu máy người dùng chạy `git pull` từ phiên bản cũ, git sẽ **xóa** các thư mục đó trên máy. Hướng dẫn người dùng dùng lệnh sau thay cho `git pull` lần đầu (giữ nguyên file trên máy):
+Commit đã gỡ `env/`, `output/`, `config.json`... khỏi git. Nếu bản clone `E:\git\tool` chạy `git pull` từ phiên bản cũ, git sẽ **xóa** các thư mục đó trên máy. Hướng dẫn người dùng dùng lệnh sau thay cho `git pull` lần đầu (giữ nguyên file trên máy):
 
 ```
 git fetch origin
