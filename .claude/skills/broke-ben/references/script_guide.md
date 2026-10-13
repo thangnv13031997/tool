@@ -90,3 +90,5 @@ shopping_bags, coffee, calculator, beg, throw_money, hug_piggy, present. Ben moo
 angry, smug, money_eyes, tired, cry. Piggy moods: smile, shock.
 SFX: pop, coin, ding, whoosh, tick, thud, cash, page, scribble. Anything else = "needs new asset" (note it for the
 tool upgrade).
+
+End card: the tool appends a 12 s subscribe screen automatically ("end_card": false to turn off); don't write a subscribe scene.
