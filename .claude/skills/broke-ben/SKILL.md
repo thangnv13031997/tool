@@ -15,7 +15,7 @@ còn nội dung video (kịch bản, tiêu đề, mô tả) viết bằng tiến
 |---|---|
 | Tên / handle | **Broke Ben** · `@BrokeBen` (dự phòng `@BrokeBenMoney`) |
 | Khẩu hiệu | *Money, explained before it's gone.* |
-| Linh vật | **Ben** (chibi, hoodie xanh, phương án A) và **Piggy Ben** (heo đất nứt dán băng, phương án B). Người làm kênh chưa chốt; hỏi nếu việc cần biết. |
+| Linh vật | **Ben** (đã chốt, là avatar kênh): người trẻ đi làm, mặt tròn thân thiện, tóc rối kiểu hiện đại, hoodie xanh, **thẻ nhân viên đeo cổ** (không balo); 15 dáng, 6 cảm xúc. **Piggy Ben** (heo đất nứt dán băng) là vai phụ hài hước. |
 | Lịch đăng | Thứ Tư và Thứ Bảy, 9:00–11:00 sáng giờ miền Đông Mỹ (khoảng 20:00–22:00 giờ Việt Nam) |
 | Màu | mực `#1D212D`, xanh tiền `#2E8B57`, kem `#F6F1E6`, vàng `#FFC43D`, đỏ mất tiền `#D64545`. Xanh = tiền vào, đỏ = tiền ra. |
 | Font | Anton (tiêu đề, số lớn), Oswald (phụ đề), Special Elite (hóa đơn) |
@@ -42,7 +42,7 @@ Luôn đưa 4 tiêu đề xếp hạng và 3 phương án chữ thumbnail (để
 **Ảnh kênh, nhân vật, cảnh minh họa, video thử** → đọc `references/art_style.md`, rồi chạy script trong `scripts/`
 (cần Python 3 + Pillow; video cần ffmpeg). Ví dụ:
 ```
-python <skill>/scripts/make_branding_v2.py     # avatar, banner, watermark cho cả 2 linh vật -> ./branding/
+python <skill>/scripts/make_branding.py        # avatar (Ben vẫy tay), banner, watermark -> ./branding/
 python <skill>/scripts/demo_animation.py       # video thử 9 giây -> ./demo/
 ```
 Sau khi dựng bất kỳ hình nào, mở ảnh ra xem và sửa chỗ chồng chữ, lệch khung trước khi giao.

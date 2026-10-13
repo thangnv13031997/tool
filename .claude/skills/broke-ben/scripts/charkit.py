@@ -4,8 +4,9 @@ Each character is drawn once on its own small canvas and returned as an RGBA spr
 so scenes, avatars and banners all reuse exactly the same artwork.
 Light comes from the top-right; shadows sit bottom-left.
 """
+import math
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
-from flatkit import Pen, rgba
+from flatkit import Pen
 
 OUTLINE = (43, 34, 51, 255)
 
@@ -98,115 +99,231 @@ def open_smile(sp, cx, cy, w, h):
     sp.part(base, shade, outline=4)
 
 
-# ================================================================ A. Ben (chibi)
-SKIN, SKIN_SH, BLUSH = (255, 217, 184), (240, 186, 150), (255, 135, 125, 110)
-HAIR, HAIR_HI = (75, 46, 34), (120, 78, 56)
+# ================================================================ A. Ben (young adult, v3)
+SKIN, SKIN_SH, BLUSH = (255, 217, 184), (238, 184, 148), (255, 140, 125, 45)
+HAIR, HAIR_HI, HAIR_SH = (75, 46, 34), (120, 78, 56), (60, 36, 27)
 HOOD, HOOD_SH, HOOD_HI = (63, 163, 107), (44, 128, 82), (110, 200, 145)
 PANTS, PANTS_SH = (44, 58, 94), (32, 42, 70)
+LANYARD, BADGE, BADGE_STRIPE = (40, 90, 160), (250, 250, 247), (46, 139, 87)
+CASH, CASH_DK = (126, 190, 120), (70, 130, 70)
+
+BEN_POSES = ['idle', 'wave', 'point', 'hold_head', 'cross_arms', 'phone', 'read', 'count_money', 'shrug',
+             'think', 'celebrate', 'thumbs_up', 'facepalm', 'explain', 'sad']
+BEN_MOODS = ['smile', 'shock', 'sad', 'worried', 'angry', 'smug']
+
+# arms: (shoulder, elbow, hand, hand_style) for the picture-left (L) and picture-right (R) arm
+_SL, _SR = (222, 378), (378, 378)
+_IDLE_L, _IDLE_R = (_SL, (198, 482), (206, 578), 'fist'), (_SR, (402, 482), (394, 578), 'fist')
+ARMS = {
+    'idle':        (_IDLE_L, _IDLE_R),
+    'wave':        (_IDLE_L, (_SR, (468, 330), (498, 238), 'open')),
+    'point':       (_IDLE_L, (_SR, (468, 404), (556, 388), 'point')),
+    'hold_head':   ((_SL, (150, 300), (194, 196), 'open'), (_SR, (450, 300), (406, 196), 'open')),
+    'cross_arms':  ((_SL, (214, 500), (350, 466), 'fist'), (_SR, (386, 500), (250, 466), 'fist')),
+    'phone':       (_IDLE_L, (_SR, (404, 504), (330, 438), 'phone')),
+    'read':        ((_SL, (214, 500), (246, 450), 'fist'), (_SR, (386, 500), (354, 450), 'fist')),
+    'count_money': ((_SL, (212, 500), (256, 456), 'cash'), (_SR, (392, 492), (338, 452), 'fist')),
+    'shrug':       ((_SL, (160, 430), (128, 352), 'open'), (_SR, (440, 430), (472, 352), 'open')),
+    'think':       ((_SL, (226, 500), (330, 500), 'fist'), (_SR, (392, 470), (332, 330), 'fist')),
+    'celebrate':   ((_SL, (160, 280), (140, 182), 'fist'), (_SR, (440, 280), (460, 182), 'fist')),
+    'thumbs_up':   (_IDLE_L, (_SR, (432, 470), (442, 392), 'thumb')),
+    'facepalm':    (_IDLE_L, (_SR, (424, 420), (330, 214), 'open')),
+    'explain':     ((_SL, (168, 470), (128, 418), 'open'), (_SR, (432, 470), (472, 418), 'open')),
+    'sad':         ((_SL, (214, 482), (232, 578), 'fist'), (_SR, (386, 482), (368, 578), 'fist')),
+}
+# arms crossing the body are drawn over the torso; the facepalm hand goes over the face
+_OVER_FACE = {'hold_head', 'facepalm', 'think'}
+
+
+def _H(x, y):
+    """Map the v2 head artwork (centre 300,255) onto the smaller adult head (centre 300,200)."""
+    return (300 + (x - 300) * 0.8, 200 + (y - 255) * 0.8)
+
+
+def _Hp(pts):
+    return [_H(x, y) for x, y in pts]
+
+
+def _hand(sp, hx, hy, style):
+    if style == 'point':
+        sp.part(lambda q: (q.circle(hx, hy, 22, SKIN), q.rect((hx, hy - 11, hx + 38, hy + 2), SKIN, r=7)), outline=6)
+    elif style == 'thumb':
+        sp.part(lambda q: (q.ellipse((hx - 22, hy - 18, hx + 22, hy + 22), SKIN),
+                           q.rect((hx - 6, hy - 46, hx + 8, hy - 8), SKIN, r=7)), outline=6)
+    elif style == 'open':
+        sp.part(lambda q: (q.ellipse((hx - 25, hy - 22, hx + 25, hy + 22), SKIN),
+                           q.ellipse((hx - 30, hy - 6, hx - 14, hy + 10), SKIN)), outline=6)
+    elif style == 'phone':
+        sp.part(lambda q: q.rect((hx - 30, hy - 66, hx + 18, hy + 14), (35, 40, 52), r=8), outline=5)
+        sp.pen.rect((hx - 25, hy - 60, hx + 13, hy + 6), (150, 215, 255), r=5)
+        sp.part(lambda q: q.circle(hx, hy + 8, 21, SKIN), outline=6)
+    elif style == 'cash':
+        for k, ang in enumerate((-28, -10, 8)):
+            lay = sp.pen.layer()
+            lay.rect((hx - 34, hy - 118, hx + 34, hy - 6), CASH, CASH_DK, 4, r=4)
+            lay.circle(hx, hy - 62, 15, None, CASH_DK, 3)
+            sp.pen.paste(lay, rotate=ang, center=(hx, hy))
+        sp.part(lambda q: q.circle(hx, hy, 22, SKIN), outline=6)
+    else:
+        sp.part(lambda q: q.circle(hx, hy, 22, SKIN), outline=6)
+
+
+def _arm(sp, arm):
+    a, b, c, style = arm
+    sp.part(lambda q: q.line([a, b, c], 44, HOOD),
+            lambda q: q.line([(a[0] - 14, a[1] + 6), (b[0] - 14, b[1] + 4), (c[0] - 12, c[1])], 18, HOOD_SH),
+            outline=6)
+    _hand(sp, c[0], c[1], style)
+
+
+def _face(sp, pose, mood, blink, talk):
+    p = sp.pen
+    look = {'point': (1, 0), 'phone': (0, 1.2), 'read': (0, 1.2), 'count_money': (0, 1), 'think': (1, -1),
+            'sad': (0, 1)}.get(pose, (0, 0))
+    ex = (_H(246, 0)[0], _H(354, 0)[0])
+    ey = _H(0, 290)[1]
+    for i, x in enumerate(ex):
+        if blink:
+            closed_eye(p, x, ey, 17)
+        elif mood == 'smug':
+            eye(p, x, ey, 17, 23, look)
+            p.chord((x - 19, ey - 26, x + 19, ey + 2), 180, 360, SKIN)
+            p.line([(x - 18, ey - 4), (x + 18, ey - 4)], 6, OUTLINE)
+        else:
+            eye(p, x, ey, 17, 23, look)
+    by = ey - 42
+    if mood == 'shock':
+        brows = [((ex[0] - 24, by - 8), (ex[0] + 22, by - 10)), ((ex[1] - 22, by - 10), (ex[1] + 24, by - 8))]
+    elif mood in ('sad', 'worried'):
+        brows = [((ex[0] - 24, by + 6), (ex[0] + 20, by - 6)), ((ex[1] - 20, by - 6), (ex[1] + 24, by + 6))]
+    elif mood == 'angry':
+        brows = [((ex[0] - 24, by - 6), (ex[0] + 20, by + 8)), ((ex[1] - 20, by + 8), (ex[1] + 24, by - 6))]
+    else:
+        brows = [((ex[0] - 22, by + 2), (ex[0] + 22, by - 2)), ((ex[1] - 22, by - 2), (ex[1] + 22, by + 2))]
+    for a, b in brows:
+        p.line([a, b], 9, OUTLINE)
+    blush = p.layer()
+    for x in (_H(214, 0)[0], _H(386, 0)[0]):
+        blush.ellipse((x - 20, ey + 34, x + 20, ey + 46), BLUSH)
+    p.paste(blush, blur=3)
+    nx, ny = _H(300, 312)
+    p.arc((nx - 8, ny - 9, nx + 8, ny + 9), 20, 160, 4, SKIN_SH)
+    mx, my = _H(300, 342)
+    if mood == 'shock':
+        mouth(sp, mx, my, 30, 26, 'shock', talk)
+    elif mood in ('sad', 'worried'):
+        if talk:
+            sp.part(lambda q: q.chord((mx - 16, my + 2, mx + 16, my + 26), 180, 360, (107, 34, 48)), outline=4)
+        elif mood == 'sad':
+            p.arc((mx - 22, my + 4, mx + 22, my + 30), 200, 340, 6, OUTLINE)
+        else:
+            p.line([(mx - 20 + 8 * k, my + 10 + (4 if k % 2 else -4)) for k in range(6)], 5, OUTLINE)
+    elif mood == 'angry':
+        if talk:
+            sp.part(lambda q: q.rect((mx - 22, my, mx + 22, my + 20), (255, 255, 255), r=6), outline=4)
+            p.line([(mx - 20, my + 10), (mx + 20, my + 10)], 3, (190, 180, 180))
+        else:
+            p.line([(mx - 18, my + 10), (mx + 18, my + 8)], 6, OUTLINE)
+    elif mood == 'smug':
+        p.arc((mx - 10, my - 16, mx + 30, my + 14), 20, 140, 6, OUTLINE)
+    else:
+        mouth(sp, mx, my, 30, 26, 'smile', talk)
+
+
+def _hair_messy(sp):
+    """Short, textured modern cut: soft bumps on top and a choppy fringe."""
+    cx, cy = 300, 255
+    pts = []
+    for i in range(61):
+        th = math.radians(196 + 148 * i / 60)
+        r = 168 + 20 * abs(math.sin(i / 60 * math.pi * 5.5))
+        pts.append((cx + r * math.cos(th), cy + r * 1.02 * math.sin(th)))
+    fringe = [(458, 250), (430, 214), (408, 236), (382, 196), (352, 222), (322, 186), (292, 216), (262, 184),
+              (232, 220), (206, 196), (184, 236), (150, 252)]
+    hair = _Hp(pts + fringe)
+
+    def shade(q):
+        q.poly(_Hp([(300, 96), (390, 104), (440, 150), (446, 190), (396, 150), (320, 124)]), HAIR_HI)
+        q.ellipse((*_H(118, 190), *_H(210, 300)), HAIR_SH)
+    sp.part(lambda q: q.poly(hair, HAIR), shade, outline=7)
 
 
 def ben(pose='idle', mood='smile', scale=1, blink=False, talk=True):
-    sp = Sprite(600, 780, scale)
+    """Young-adult Ben (about 3.5 heads tall): messy modern hair, green hoodie with a work ID badge on a lanyard,
+    navy jeans, white sneakers."""
+    pose = pose if pose in ARMS else 'idle'
+    mood = mood if mood in BEN_MOODS else 'smile'
+    sp = Sprite(600, 940, scale)
     p = sp.pen
     lay = p.layer()                                   # ground shadow
-    lay.ellipse((170, 728, 430, 768), (0, 0, 0, 60))
+    lay.ellipse((180, 846, 420, 882), (0, 0, 0, 60))
     p.paste(lay, blur=4)
 
-    # shoes + legs
-    for x in (255, 345):
-        sp.part(lambda q, x=x: q.rect((x - 24, 630, x + 24, 734), PANTS, r=18),
-                lambda q, x=x: q.rect((x - 24, 630, x - 4, 734), PANTS_SH), outline=6)
-    for x, s in ((250, -1), (350, 1)):
-        sp.part(lambda q, x=x, s=s: q.ellipse((x - 46 + s * 8, 712, x + 46 + s * 8, 762), (246, 246, 240)),
-                lambda q, x=x, s=s: (q.rect((x - 60, 744, x + 60, 770), (205, 205, 198)),
-                                     q.line([(x - 28 + s * 8, 728), (x + 22 + s * 8, 728)], 7, HOOD)), outline=6)
+    # legs + sneakers
+    for x in (263, 337):
+        sp.part(lambda q, x=x: q.rect((x - 32, 590, x + 32, 836), PANTS, r=22),
+                lambda q, x=x: q.rect((x - 32, 590, x - 8, 836), PANTS_SH), outline=6)
+    for x, s in ((256, -1), (344, 1)):
+        sp.part(lambda q, x=x, s=s: q.ellipse((x - 48 + s * 8, 814, x + 48 + s * 8, 864), (246, 246, 240)),
+                lambda q, x=x, s=s: (q.rect((x - 60, 846, x + 60, 870), (205, 205, 198)),
+                                     q.line([(x - 28 + s * 8, 830), (x + 22 + s * 8, 830)], 7, HOOD)), outline=6)
 
-    # back arm (left side of picture) is always relaxed
-    arms = {'idle': [((222, 452), (190, 540), (202, 612))],
-            'wave': [((222, 452), (190, 540), (202, 612))],
-            'point': [((222, 452), (190, 540), (202, 612))]}
-    front = {'idle': ((378, 452), (410, 540), (398, 612)),
-             'wave': ((378, 452), (470, 420), (512, 330)),
-             'point': ((378, 452), (462, 474), (548, 458))}[pose]
-
-    def sleeve(a, b, c):
-        sp.part(lambda q: q.line([a, b, c], 50, HOOD),
-                lambda q: q.line([(a[0] - 16, a[1] + 6), (b[0] - 16, b[1] + 4), (c[0] - 14, c[1])], 22, HOOD_SH),
-                outline=6)
-
-    for a, b, c in arms[pose]:
-        sleeve(a, b, c)
-        sp.part(lambda q, c=c: q.circle(c[0], c[1] + 8, 27, SKIN), outline=6)
-
-    # hoodie body
-    body = path((215, 430), [((250, 405), (350, 405), (385, 430)), ((412, 470), (420, 540), (414, 600)),
-                             ((408, 650), (360, 670), (300, 670)), ((240, 670), (192, 650), (186, 600)),
-                             ((180, 540), (188, 470), (215, 430))])
+    # hoodie torso
+    body = path((214, 362), [((250, 344), (350, 344), (386, 362)), ((406, 430), (402, 530), (398, 604)),
+                             ((360, 616), (240, 616), (202, 604)), ((198, 530), (194, 430), (214, 362))])
 
     def body_shade(q):
-        q.ellipse((120, 470, 300, 760), HOOD_SH)
-        q.rect((150, 640, 450, 700), HOOD_SH)
-        q.ellipse((330, 440, 410, 500), HOOD_HI + (170,))
+        q.ellipse((120, 400, 290, 700), HOOD_SH)
+        q.rect((150, 578, 450, 640), HOOD_SH)
+        q.ellipse((334, 372, 400, 420), HOOD_HI + (160,))
     sp.part(lambda q: q.poly(body, HOOD), body_shade, outline=7)
-    pocket = path((246, 562), [((280, 556), (320, 556), (354, 562)), ((362, 590), (366, 612), (370, 628)),
-                               ((320, 632), (280, 632), (230, 628)), ((234, 612), (238, 590), (246, 562))])
+    pocket = [(250, 520), (350, 520), (360, 576), (240, 576)]
     p.poly(pocket, HOOD_SH)
     p.line(pocket + [pocket[0]], 4, (34, 100, 64))
     # collar + strings
-    p.ellipse((212, 412, 388, 458), HOOD_SH, OUTLINE, 5)
-    p.ellipse((262, 408, 338, 440), SKIN_SH)
-    for x0, x1 in ((282, 276), (318, 324)):
-        p.line([(x0, 446), (x1, 506)], 6, (250, 250, 245))
-        p.rect((x1 - 5, 500, x1 + 5, 518), (200, 200, 195), r=3)
+    p.ellipse((240, 340, 360, 378), HOOD_SH, OUTLINE, 5)
+    sp.part(lambda q: q.rect((280, 300, 320, 352), SKIN), lambda q: q.rect((280, 300, 320, 318), SKIN_SH), outline=5)
+    for x0, x1 in ((286, 282), (314, 318)):
+        p.line([(x0, 372), (x1, 420)], 5, (250, 250, 245))
+    # work ID badge on a lanyard ("a guy with a paycheck")
+    p.line([(272, 352), (296, 470)], 7, LANYARD)
+    p.line([(328, 352), (304, 470)], 7, LANYARD)
+    sp.part(lambda q: q.rect((268, 466, 332, 548), BADGE, r=6),
+            lambda q: (q.rect((268, 466, 332, 484), BADGE_STRIPE), q.circle(300, 512, 11, (200, 196, 190))),
+            outline=4)
 
-    # ears, head
+    over = _OVER_FACE.copy()
+    L, R = ARMS[pose]
+    if pose not in over:
+        for arm in (L, R) if pose != 'cross_arms' else (R, L):
+            _arm(sp, arm)
+
+    # ears, head, hair
     for x in (152, 448):
-        sp.part(lambda q, x=x: q.circle(x, 282, 30, SKIN),
-                lambda q, x=x: q.arc((x - 15, 267, x + 15, 297), 100 if x < 300 else -80, 260 if x < 300 else 80,
-                                     5, SKIN_SH), outline=6)
+        cx, cy = _H(x, 282)
+        sp.part(lambda q, cx=cx, cy=cy: q.circle(cx, cy, 24, SKIN), outline=6)
 
     def head_shade(q):
-        q.ellipse((140, 108, 460, 404), SKIN_SH)
-        q.ellipse((170, 96, 470, 384), SKIN)
-    sp.part(lambda q: q.ellipse((148, 113, 452, 397), SKIN), head_shade, outline=7)
+        q.ellipse((*_H(140, 108), *_H(460, 404)), SKIN_SH)
+        q.ellipse((*_H(170, 96), *_H(470, 384)), SKIN)
+    sp.part(lambda q: q.ellipse((*_H(148, 113), *_H(452, 397)), SKIN), head_shade, outline=7)
+    _hair_messy(sp)
+    _face(sp, pose, mood, blink, talk)
 
-    # hair
-    hair = path((146, 262), [((132, 120), (240, 88), (312, 96)), ((404, 100), (468, 170), (454, 262)),
-                             ((436, 206), (404, 196), (372, 212)), ((350, 178), (306, 190), (274, 220)),
-                             ((246, 190), (204, 188), (186, 236)), ((172, 246), (160, 256), (146, 262))])
-    tuft = path((292, 104), [((280, 58), (322, 40), (350, 56)), ((328, 66), (318, 84), (326, 104))])
-
-    def hair_shade(q):
-        hi = path((326, 118), [((382, 114), (424, 150), (434, 196)), ((412, 162), (382, 140), (326, 132))])
-        q.poly(hi, HAIR_HI)
-        q.ellipse((118, 200, 210, 300), (62, 38, 28))
-    sp.part(lambda q: (q.poly(tuft, HAIR), q.poly(hair, HAIR)), hair_shade, outline=7)
-
-    # face
-    look = (1, 0) if pose == 'point' else (0, 0)
-    for x in (246, 354):
-        closed_eye(p, x, 288) if blink else eye(p, x, 288, look=look)
-    if mood == 'shock':
-        brow(p, (214, 218), (272, 214))
-        brow(p, (328, 214), (386, 218))
-    else:
-        brow(p, (216, 228), (272, 220))
-        brow(p, (328, 220), (384, 228))
-    blush = p.layer()
-    for x in (212, 388):
-        blush.ellipse((x - 28, 330, x + 28, 348), BLUSH)
-    p.paste(blush, blur=2)
-    p.arc((290, 300, 310, 322), 20, 160, 5, SKIN_SH)
-    mouth(sp, 300, 338, 40, 36, mood, talk)
-
-    # front arm on top
-    a, b, c = front
-    sleeve(a, b, c)
-    if pose == 'point':
-        sp.part(lambda q: (q.circle(c[0], c[1], 27, SKIN), q.rect((c[0], c[1] - 14, c[0] + 44, c[1] + 2), SKIN, r=8)),
-                outline=6)
-    else:
-        sp.part(lambda q: q.circle(c[0], c[1] + (0 if pose == 'wave' else 8), 27, SKIN), outline=6)
+    if pose in over:
+        for arm in (L, R):
+            _arm(sp, arm)
+    if pose == 'read':                                 # receipt held in both hands
+        lay = p.layer()
+        zig = [(232 + 136 * i / 8, 556 + (8 if i % 2 else 0)) for i in range(8, -1, -1)]
+        lay.poly([(232, 404), (368, 404)] + zig, (252, 250, 244))
+        lay.line([(232, 404), (368, 404)] + zig + [(232, 404)], 4, OUTLINE)
+        for k in range(5):
+            lay.line([(246, 428 + k * 22), (354 - (30 if k == 4 else 0), 428 + k * 22)], 4,
+                     (214, 69, 69) if k == 4 else (150, 146, 140))
+        p.paste(lay)
+        for hx in (246, 354):
+            sp.part(lambda q, hx=hx: q.circle(hx, 452, 22, SKIN), outline=6)
     return sp.done()
 
 

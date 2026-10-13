@@ -7,9 +7,8 @@ Scripts write into the current working directory.
 | Script | What it does |
 |---|---|
 | `flatkit.py` | Low-level drawing: `Pen` (2x supersampled, layers, gradients, glow, rounded rects, text), v1 stick figure, `caption()` pill. |
-| `charkit.py` | v2 mascots as RGBA sprites: `ben(pose, mood, scale, blink, talk)`, `piggy(mood, scale, blink, talk)`. |
-| `make_branding.py` | v1 branding (stick-figure Ben) + shared helpers: `coin()`, `banner_preview()`, `avatar_preview()`, safe-area constants. |
-| `make_branding_v2.py` | v2 branding for both options → `branding/option_A_ben`, `branding/option_B_piggy`, `branding/COMPARE_v2.jpg`. |
+| `charkit.py` | Mascots as RGBA sprites (same file as `app/engine/charkit.py` in the repo): `ben(...)`, `piggy(...)`. |
+| `make_branding.py` | Channel art with Ben → `branding/` (avatar, banner, watermark, device previews). |
 | `demo_animation.py` | 9-second animation test → `demo/demo_9s.mp4` + `demo/frames.jpg`. |
 | `money_math.py` | The numbers (see script_guide.md). |
 
@@ -21,12 +20,15 @@ Scripts write into the current working directory.
 - Backgrounds: cream ledger-paper grid, flat floor band; scenes stay light and friendly.
 - Fonts: Anton (titles, thumbnails, big numbers), Oswald (captions, labels), Special Elite (receipts, documents).
 
-## Mascots
-- **Ben** (option A): chibi, spiky-swoop brown hair with a tuft, green hoodie with strings and pocket,
-  navy pants, white sneakers. Poses: `idle`, `wave`, `point`. Moods: `smile`, `shock`. `blink=True` closes
-  the eyes, `talk=False` gives the closed-mouth frame for lip flaps.
-- **Piggy Ben** (option B): pink piggy bank, coin slot on top, crack with a band-aid on the right side.
-  Moods `smile`, `shock`; same blink/talk flags.
+## Mascots (decided)
+- **Ben** (the channel avatar): young adult, about 3.5 heads tall, round friendly face, light blush, **messy modern
+  hair**, green hoodie, **work ID badge on a blue lanyard** (no backpack), navy jeans, white sneakers.
+  `ben(pose, mood, scale, blink, talk)`.
+  - Poses (15): idle, wave, point, hold_head, cross_arms, phone, read, count_money, shrug, think, celebrate,
+    thumbs_up, facepalm, explain, sad.
+  - Moods (6): smile, shock, sad, worried, angry, smug. `blink=True` closes the eyes; `talk=False` is the closed-mouth
+    frame for lip flaps. Reference sheet: `docs/ben_poses.png` in the broke-ben repo.
+- **Piggy Ben** (sidekick): pink piggy bank, coin slot, crack with a band-aid. Moods smile, shock.
 
 ## Animation approach (cut-out, not skeletal)
 Sprites are drawn once and cached; motion comes from: breathing (±1.2% squash/stretch), blinks (4 frames),
@@ -34,8 +36,8 @@ lip flaps (swap talk frame every 4 frames while speaking), pose swaps on beat ch
 entrances, impact squash (damped cosine), pop-in cards (ease-out-back), counting numbers (ease-in-out).
 
 ## Adding a new pose or mood
-1. In `charkit.py`, add the arm path to `front`/`arms` (three points: shoulder, elbow, hand) or a new
-   branch in the face section. Keep shoulders at (222, 452) / (378, 452) and the 600x780 canvas.
+1. In `charkit.py`, add an entry to `ARMS` (shoulder, elbow, hand, hand style for each arm) and to
+   `BEN_POSES`; shoulders are at (222, 378) / (378, 378) on the 600x940 canvas. New moods go in `_face`.
 2. Draw shapes with `sp.part(base, shade, outline)` so shading is clipped and the sticker outline matches.
 3. Never draw semi-transparent colours straight onto the sprite: draw them on `p.layer()` and `p.paste()`
    (direct RGBA writes punch holes; that was the grey-blush bug).
