@@ -33,7 +33,7 @@ Scripts write into the current working directory.
 
 ## Ben's Notebook (hand-drawn segments)
 `app/sketch.py` in the repo: show type `sketch` (kinds line, bars, pie, flow). On a `notebook` background the scene
-opens with a page flip; the creator's reference hand picture (assets/hand_reference.jpg, cut out by tools/make_hand.py into assets/hand_pencil.png) draws the chart stroke by stroke (axes, data, fills), then
+opens with a page flip; a short hand holding a pencil (assets/hand_pencil.png, Openclipart 172946, CC0; swap in assets/hand_custom.png, tip auto-detected) draws the chart stroke by stroke (axes, data, fills), then
 writes labels in the Patrick Hand font (SIL OFL, supports Vietnamese). Lines get a small deterministic wobble.
 Sounds `page` and `scribble` are added automatically. Use for ~20% of scenes, mainly to explain concepts.
 
