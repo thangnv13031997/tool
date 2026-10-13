@@ -30,7 +30,11 @@ DÙNG HẰNG NGÀY
    - render_report.txt       điểm giữ chân và các vấn đề phát hiện
 
 HÌNH ẢNH (tự động theo kịch bản)
-- Nhân vật cấp 3: người que có tóc, quần áo, mắt to biểu cảm; thực thể: bóng đen, người áo mưa vàng, người mặt trắng, ma trẻ con...
+- Nhân vật kiểu "chibi" (mặc định): đầu tròn to có tai, mắt chấm, thân và tay chân mập có viền. Muốn người que gầy kiểu cũ:
+  ghi "figure_style": "stick" trong kịch bản hoặc config.json. Thực thể (bóng đen, người áo mưa vàng, người mặt trắng,
+  ma trẻ con...) vẫn vẽ người que gầy để trông "sai sai" cạnh người thường.
+- Trang phục riêng cho từng nhân vật: hoodie, jacket, tshirt, sweater, raincoat, coat, dress, uniform, pajamas, suit, flannel,
+  scrubs (y tá), apron (thu ngân), hi_vis (áo phản quang), overalls (quần yếm) + màu áo, màu phụ (accent_color), màu quần, giày, phụ kiện.
 - 31 bối cảnh tối nhiều lớp: trạm xe buýt, trong xe buýt, trạm xăng, cửa hàng đêm, rừng, cắm trại, nhà, hành lang, tầng hầm...
 - Ánh sáng thật (đèn đường, đèn trần, đèn pin, màn hình điện thoại), đèn chập chờn, mất điện, sương, mưa, nhiễu phim, VHS.
 - Camera luôn chuyển động nhẹ; cảnh dài tự đổi góc máy giữa các câu để giữ mắt người xem.
@@ -65,3 +69,7 @@ CẤU HÌNH (config.json)
 - anthropic_api_key, claude_model : chỉ cần nếu dùng viết kịch bản tự động
 
 Bản quyền font: Anton, Oswald, Creepster (SIL OFL 1.1), Special Elite (Apache 2.0). Đều dùng thương mại được.
+
+GIT / GITHUB
+- config.json, env, output, logs, library\_generated không đưa lên GitHub (xem .gitignore).
+- Giá trị mặc định nằm ở config.example.json; config.json tự tạo khi mở app lần đầu. Đừng ghi API key vào config.example.json.

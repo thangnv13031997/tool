@@ -1,0 +1,17 @@
+# Môi trường Python (tạo lại bằng setup.bat)
+env/
+__pycache__/
+*.pyc
+
+# Cấu hình trên máy (có thể chứa API key) - mẫu nằm ở config.example.json
+config.json
+
+# Kết quả xuất, nhật ký, cache
+output/
+logs/
+library/_generated/
+
+# Âm thanh riêng của bạn trong library (thường có bản quyền riêng)
+library/music/
+library/ambience/
+library/sfx/
