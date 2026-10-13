@@ -52,7 +52,8 @@ Dùng bảng màu và font ở trên; không tự đổi phong cách nhân vật
 app Windows (Tkinter) dùng giọng Kokoro có sẵn ở `E:\LocalTTS\env_en` qua `app/tts_worker.py`, giống Horror Studio.
 Xuất video 1080p + Shorts + 3 thumbnail + `youtube.txt` + phụ đề `subtitles_en.srt` / `subtitles_vi.srt`; có nút chọn
 phụ đề trên video: tiếng Anh (bản đăng), tiếng Việt (bản để người làm kênh xem duyệt) hoặc không.
-Có đoạn **Ben's Notebook**: lật trang sổ, bàn tay vẽ biểu đồ từng nét (`show.type = "sketch"`).
+Có đoạn **Ben's Notebook**: trang sổ lò xo nghiêng trên bàn, bàn tay vẽ biểu đồ từng nét (`show.type = "sketch"`);
+vẽ tiếp thì lật trang, đổi loại thành phần thì trượt vào. Thẻ tiền tự đổi kiểu: sticker, thẻ giá (đỏ), tờ tiền (xanh).
 - **Kịch bản cho tool** = một object JSON đúng định dạng trong `docs/PROMPT_FOR_CLAUDE.md` của repo (bản sao trong
   `references/script_guide.md`, mục "Script deliverable format"). **Mỗi câu có `text` (tiếng Anh) và `vi` (tiếng Việt)**,
   cộng `youtube.title_vi` / `description_vi`, vì người làm kênh đọc tiếng Anh chưa tốt.

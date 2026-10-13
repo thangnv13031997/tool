@@ -83,7 +83,8 @@ Minimal shape:
 ```
 Backgrounds: grid, room, desk, city, notebook, plain. Show types: money_card, big_text, invest_chart, chart, receipt,
 phone, compare, list, coin_drop, sketch (Ben's Notebook hand drawing; kind line | bars | pie | flow; use with
-bg notebook for the page flip, ~20% of scenes). Ben poses (25): idle, wave, point, hold_head, cross_arms, phone, read,
+bg notebook: a tilted notebook page on the desk; consecutive notebook scenes turn the page, ~20% of scenes;
+money_card color red = price tag, green = banknote). Ben poses (25): idle, wave, point, hold_head, cross_arms, phone, read,
 count_money, shrug, think, celebrate, thumbs_up, facepalm, explain, sad, sit_desk, empty_pockets, credit_card,
 shopping_bags, coffee, calculator, beg, throw_money, hug_piggy, present. Ben moods (9): smile, shock, sad, worried,
 angry, smug, money_eyes, tired, cry. Piggy moods: smile, shock.

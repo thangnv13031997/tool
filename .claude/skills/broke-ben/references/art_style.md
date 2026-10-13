@@ -32,10 +32,19 @@ Scripts write into the current working directory.
 - **Piggy Ben** (sidekick): pink piggy bank, coin slot, crack with a band-aid. Moods smile, shock.
 
 ## Ben's Notebook (hand-drawn segments)
-`app/sketch.py` in the repo: show type `sketch` (kinds line, bars, pie, flow). On a `notebook` background the scene
-opens with a page flip; a short hand holding a pencil (assets/hand_pencil.png, Openclipart 172946, CC0; swap in assets/hand_custom.png, tip auto-detected) draws the chart stroke by stroke (axes, data, fills), then
-writes labels in the Patrick Hand font (SIL OFL, supports Vietnamese). Lines get a small deterministic wobble.
-Sounds `page` and `scribble` are added automatically. Use for ~20% of scenes, mainly to explain concepts.
+`app/sketch.py` + `scene._notebook` in the repo: show type `sketch` (kinds line, bars, pie, flow) on `"bg": "notebook"`.
+A spiral notebook page lies tilted (-2°) on Ben's desk beside him (or centred when `chars` is `[]`); a short hand
+holding a pencil (assets/hand_pencil.png, Openclipart 172946, CC0; swap in assets/hand_custom.png, tip auto-detected)
+draws the chart stroke by stroke, then writes labels in the Patrick Hand font. Transitions are automatic: the page
+**turns** when the previous scene was also a notebook page, and anything **slides in** from the right when the kind
+of element changes (card → page, page → card, card → chart); same kind pops. Sounds page / whoosh / scribble are added.
+
+## Money elements (look)
+money_card: `color: red` → swinging price tag (money out), `color: green` → banknote (money in / kept), otherwise and
+when counting → bold sticker (thick outline, hard shadow, coloured tab). `style` overrides (sticker|tag|bill|plain).
+phone → bank notifications sliding in under the balance (`style: phone` = old screen). list → yellow sticky note,
+handwritten, ticked/crossed line by line (`style: card` = old list). Still cards are drawn once (see
+`elements.quantize`) so they cost almost nothing per frame.
 
 ## Animation approach (cut-out, not skeletal)
 Sprites are drawn once and cached; motion comes from: breathing (±1.2% squash/stretch), blinks (4 frames),
