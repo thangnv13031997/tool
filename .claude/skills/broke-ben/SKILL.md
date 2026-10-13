@@ -15,7 +15,7 @@ còn nội dung video (kịch bản, tiêu đề, mô tả) viết bằng tiến
 |---|---|
 | Tên / handle | **Broke Ben** · `@BrokeBen` (dự phòng `@BrokeBenMoney`) |
 | Khẩu hiệu | *Money, explained before it's gone.* |
-| Linh vật | **Ben** (đã chốt, là avatar kênh): người trẻ đi làm, mặt tròn thân thiện, tóc rối kiểu hiện đại, hoodie xanh, **thẻ nhân viên đeo cổ** (không balo); 15 dáng, 6 cảm xúc. **Piggy Ben** (heo đất nứt dán băng) là vai phụ hài hước. |
+| Linh vật | **Ben** (đã chốt, là avatar kênh): người trẻ đi làm, mặt tròn thân thiện, tóc rối kiểu hiện đại, hoodie xanh, **thẻ nhân viên đeo cổ** (không balo); 25 dáng, 9 cảm xúc (xem `references/art_style.md`). **Piggy Ben** (heo đất nứt dán băng) là vai phụ hài hước. |
 | Lịch đăng | Thứ Tư và Thứ Bảy, 9:00–11:00 sáng giờ miền Đông Mỹ (khoảng 20:00–22:00 giờ Việt Nam) |
 | Màu | mực `#1D212D`, xanh tiền `#2E8B57`, kem `#F6F1E6`, vàng `#FFC43D`, đỏ mất tiền `#D64545`. Xanh = tiền vào, đỏ = tiền ra. |
 | Font | Anton (tiêu đề, số lớn), Oswald (phụ đề), Special Elite (hóa đơn) |
@@ -52,6 +52,7 @@ Dùng bảng màu và font ở trên; không tự đổi phong cách nhân vật
 app Windows (Tkinter) dùng giọng Kokoro có sẵn ở `E:\LocalTTS\env_en` qua `app/tts_worker.py`, giống Horror Studio.
 Xuất video 1080p + Shorts + 3 thumbnail + `youtube.txt` + phụ đề `subtitles_en.srt` / `subtitles_vi.srt`; có nút chọn
 phụ đề trên video: tiếng Anh (bản đăng), tiếng Việt (bản để người làm kênh xem duyệt) hoặc không.
+Có đoạn **Ben's Notebook**: lật trang sổ, bàn tay vẽ biểu đồ từng nét (`show.type = "sketch"`).
 - **Kịch bản cho tool** = một object JSON đúng định dạng trong `docs/PROMPT_FOR_CLAUDE.md` của repo (bản sao trong
   `references/script_guide.md`, mục "Script deliverable format"). **Mỗi câu có `text` (tiếng Anh) và `vi` (tiếng Việt)**,
   cộng `youtube.title_vi` / `description_vi`, vì người làm kênh đọc tiếng Anh chưa tốt.

@@ -108,8 +108,10 @@ LANYARD, BADGE, BADGE_STRIPE = (40, 90, 160), (250, 250, 247), (46, 139, 87)
 CASH, CASH_DK = (126, 190, 120), (70, 130, 70)
 
 BEN_POSES = ['idle', 'wave', 'point', 'hold_head', 'cross_arms', 'phone', 'read', 'count_money', 'shrug',
-             'think', 'celebrate', 'thumbs_up', 'facepalm', 'explain', 'sad']
-BEN_MOODS = ['smile', 'shock', 'sad', 'worried', 'angry', 'smug']
+             'think', 'celebrate', 'thumbs_up', 'facepalm', 'explain', 'sad',
+             'sit_desk', 'empty_pockets', 'credit_card', 'shopping_bags', 'coffee', 'calculator', 'beg',
+             'throw_money', 'hug_piggy', 'present']
+BEN_MOODS = ['smile', 'shock', 'sad', 'worried', 'angry', 'smug', 'money_eyes', 'tired', 'cry']
 
 # arms: (shoulder, elbow, hand, hand_style) for the picture-left (L) and picture-right (R) arm
 _SL, _SR = (222, 378), (378, 378)
@@ -130,6 +132,17 @@ ARMS = {
     'facepalm':    (_IDLE_L, (_SR, (424, 420), (330, 214), 'open')),
     'explain':     ((_SL, (168, 470), (128, 418), 'open'), (_SR, (432, 470), (472, 418), 'open')),
     'sad':         ((_SL, (214, 482), (232, 578), 'fist'), (_SR, (386, 482), (368, 578), 'fist')),
+    # money-life poses
+    'sit_desk':      ((_SL, (198, 480), (206, 560), 'fist'), (_SR, (402, 480), (394, 560), 'fist')),
+    'empty_pockets': ((_SL, (172, 470), (142, 524), 'open'), (_SR, (428, 470), (458, 524), 'open')),
+    'credit_card':   (_IDLE_L, (_SR, (462, 420), (540, 402), 'card')),
+    'shopping_bags': ((_SL, (190, 482), (180, 590), 'bag'), (_SR, (410, 482), (420, 590), 'bag2')),
+    'coffee':        (_IDLE_L, (_SR, (404, 504), (338, 452), 'cup')),
+    'calculator':    ((_SL, (214, 506), (250, 474), 'fist'), (_SR, (386, 506), (350, 474), 'fist')),
+    'beg':           ((_SL, (226, 504), (290, 432), 'fist'), (_SR, (374, 504), (310, 432), 'fist')),
+    'throw_money':   (_IDLE_L, (_SR, (452, 300), (486, 214), 'cash')),
+    'hug_piggy':     ((_SL, (204, 500), (238, 528), 'fist'), (_SR, (396, 500), (362, 528), 'fist')),
+    'present':       (_IDLE_L, (_SR, (450, 440), (500, 462), 'pointer')),
 }
 # arms crossing the body are drawn over the torso; the facepalm hand goes over the face
 _OVER_FACE = {'hold_head', 'facepalm', 'think'}
@@ -157,6 +170,32 @@ def _hand(sp, hx, hy, style):
         sp.part(lambda q: q.rect((hx - 30, hy - 66, hx + 18, hy + 14), (35, 40, 52), r=8), outline=5)
         sp.pen.rect((hx - 25, hy - 60, hx + 13, hy + 6), (150, 215, 255), r=5)
         sp.part(lambda q: q.circle(hx, hy + 8, 21, SKIN), outline=6)
+    elif style == 'card':
+        lay = sp.pen.layer()
+        lay.rect((hx - 6, hy - 40, hx + 74, hy + 10), (40, 70, 140), OUTLINE, 4, r=8)
+        lay.rect((hx + 2, hy - 30, hx + 22, hy - 16), (230, 190, 90), r=3)
+        lay.line([(hx + 4, hy - 4), (hx + 64, hy - 4)], 4, (200, 210, 230), caps=False)
+        sp.pen.paste(lay, rotate=-8, center=(hx, hy))
+        sp.part(lambda q: q.circle(hx, hy, 22, SKIN), outline=6)
+    elif style in ('bag', 'bag2'):
+        col = (214, 69, 69) if style == 'bag' else (226, 160, 58)
+        sp.part(lambda q: q.arc((hx - 22, hy - 10, hx + 22, hy + 40), 180, 360, 6, (90, 70, 60)), outline=0)
+        sp.part(lambda q: q.rect((hx - 46, hy + 16, hx + 46, hy + 120), col, r=8),
+                lambda q: q.rect((hx - 46, hy + 16, hx - 26, hy + 120), tuple(int(c * 0.8) for c in col)), outline=6)
+        sp.part(lambda q: q.circle(hx, hy, 22, SKIN), outline=6)
+    elif style == 'cup':
+        sp.part(lambda q: q.poly([(hx - 30, hy - 70), (hx + 18, hy - 70), (hx + 12, hy + 4), (hx - 24, hy + 4)],
+                                 (250, 248, 240)),
+                lambda q: q.rect((hx - 30, hy - 48, hx + 18, hy - 22), (120, 80, 50)), outline=5)
+        sp.part(lambda q: q.rect((hx - 34, hy - 82, hx + 22, hy - 68), (240, 236, 226), r=4), outline=4)
+        for k in range(2):
+            sp.pen.line([(hx - 14 + k * 14, hy - 92), (hx - 20 + k * 14, hy - 108), (hx - 12 + k * 14, hy - 124)],
+                        4, (200, 196, 190))
+        sp.part(lambda q: q.circle(hx, hy, 21, SKIN), outline=6)
+    elif style == 'pointer':
+        sp.part(lambda q: q.line([(hx, hy), (594, 300)], 9, (120, 82, 50)), outline=4)
+        sp.pen.circle(594, 300, 6, (214, 69, 69))
+        sp.part(lambda q: q.circle(hx, hy, 22, SKIN), outline=6)
     elif style == 'cash':
         for k, ang in enumerate((-28, -10, 8)):
             lay = sp.pen.layer()
@@ -179,12 +218,22 @@ def _arm(sp, arm):
 def _face(sp, pose, mood, blink, talk):
     p = sp.pen
     look = {'point': (1, 0), 'phone': (0, 1.2), 'read': (0, 1.2), 'count_money': (0, 1), 'think': (1, -1),
-            'sad': (0, 1)}.get(pose, (0, 0))
+            'sad': (0, 1), 'sit_desk': (0, 0.8), 'calculator': (0, 1.2), 'coffee': (0, 0.4),
+            'credit_card': (1, 0), 'present': (1, 0), 'hug_piggy': (0, 1)}.get(pose, (0, 0))
     ex = (_H(246, 0)[0], _H(354, 0)[0])
     ey = _H(0, 290)[1]
     for i, x in enumerate(ex):
         if blink:
             closed_eye(p, x, ey, 17)
+        elif mood == 'money_eyes':
+            p.text((x, ey + 2), '$', 'display', 56, (46, 139, 87), anchor='mm', stroke=3, stroke_fill=OUTLINE)
+        elif mood == 'tired':
+            eye(p, x, ey, 17, 23, (0, 0.6))
+            p.chord((x - 19, ey - 26, x + 19, ey + 4), 180, 360, SKIN)
+            p.line([(x - 18, ey), (x + 18, ey)], 6, OUTLINE)
+            p.arc((x - 16, ey + 14, x + 16, ey + 30), 20, 160, 4, SKIN_SH)
+        elif mood == 'cry':
+            p.arc((x - 17, ey - 10, x + 17, ey + 14), 200, 340, 7, OUTLINE)
         elif mood == 'smug':
             eye(p, x, ey, 17, 23, look)
             p.chord((x - 19, ey - 26, x + 19, ey + 2), 180, 360, SKIN)
@@ -194,7 +243,7 @@ def _face(sp, pose, mood, blink, talk):
     by = ey - 42
     if mood == 'shock':
         brows = [((ex[0] - 24, by - 8), (ex[0] + 22, by - 10)), ((ex[1] - 22, by - 10), (ex[1] + 24, by - 8))]
-    elif mood in ('sad', 'worried'):
+    elif mood in ('sad', 'worried', 'cry', 'tired'):
         brows = [((ex[0] - 24, by + 6), (ex[0] + 20, by - 6)), ((ex[1] - 20, by - 6), (ex[1] + 24, by + 6))]
     elif mood == 'angry':
         brows = [((ex[0] - 24, by - 6), (ex[0] + 20, by + 8)), ((ex[1] - 20, by + 8), (ex[1] + 24, by - 6))]
@@ -209,7 +258,18 @@ def _face(sp, pose, mood, blink, talk):
     nx, ny = _H(300, 312)
     p.arc((nx - 8, ny - 9, nx + 8, ny + 9), 20, 160, 4, SKIN_SH)
     mx, my = _H(300, 342)
-    if mood == 'shock':
+    if mood == 'cry':                                   # tear streams
+        tears = p.layer()
+        for x in ex:
+            tears.line([(x - 4, ey + 12), (x - 8, ey + 60), (x - 4, ey + 86)], 9, (120, 190, 255, 220))
+        p.paste(tears)
+    if mood == 'cry':
+        sp.part(lambda q: q.chord((mx - 24, my - 4, mx + 24, my + 34), 180, 360, (107, 34, 48)), outline=4)
+    elif mood == 'tired':
+        p.line([(mx - 16, my + 12), (mx + 16, my + 10)], 6, OUTLINE)
+    elif mood == 'money_eyes':
+        mouth(sp, mx, my, 30, 26, 'smile', True)
+    elif mood == 'shock':
         mouth(sp, mx, my, 30, 26, 'shock', talk)
     elif mood in ('sad', 'worried'):
         if talk:
@@ -246,6 +306,47 @@ def _hair_messy(sp):
         q.poly(_Hp([(300, 96), (390, 104), (440, 150), (446, 190), (396, 150), (320, 124)]), HAIR_HI)
         q.ellipse((*_H(118, 190), *_H(210, 300)), HAIR_SH)
     sp.part(lambda q: q.poly(hair, HAIR), shade, outline=7)
+
+
+def _pose_props(sp, pose):
+    """Objects in front of Ben that belong to a pose (drawn after the arms)."""
+    p = sp.pen
+    if pose == 'sit_desk':
+        sp.part(lambda q: q.rect((40, 556, 560, 940), (176, 125, 83)),
+                lambda q: (q.rect((40, 556, 560, 584), (200, 146, 100)), q.rect((40, 584, 560, 600), (140, 98, 64))),
+                outline=7)
+        sp.part(lambda q: q.poly([(222, 430), (378, 430), (390, 556), (210, 556)], (170, 176, 186)),
+                lambda q: q.poly([(222, 430), (300, 430), (290, 556), (210, 556)], (150, 156, 168)), outline=6)
+        p.circle(300, 492, 14, (226, 230, 236))
+        for hx in (206, 394):
+            sp.part(lambda q, hx=hx: q.circle(hx, 560, 22, SKIN), outline=6)
+    elif pose == 'calculator':
+        sp.part(lambda q: q.rect((248, 392, 352, 520), (52, 58, 70), r=10), outline=6)
+        p.rect((260, 404, 340, 432), (190, 220, 170), r=4)
+        p.text((334, 418), '$33', 'semi', 22, (40, 60, 40), anchor='rm')
+        for r_ in range(3):
+            for c in range(4):
+                p.rect((260 + c * 20, 444 + r_ * 24, 274 + c * 20, 460 + r_ * 24),
+                       (214, 69, 69) if (r_, c) == (2, 3) else (200, 204, 212), r=3)
+        for hx in (250, 350):
+            sp.part(lambda q, hx=hx: q.circle(hx, 474, 22, SKIN), outline=6)
+    elif pose == 'hug_piggy':
+        pig = piggy('smile', scale=1)
+        pig = pig.crop(pig.getbbox())
+        k = 190 / pig.width
+        pig = pig.resize((190, int(pig.height * k)), Image.LANCZOS)
+        S = p.S
+        big = pig.resize((pig.width * S, pig.height * S), Image.LANCZOS)
+        p.img.alpha_composite(big, (int((300 - pig.width / 2) * S), int((548 - pig.height) * S)))
+        p.d = ImageDraw.Draw(p.img)
+        for hx in (238, 362):
+            sp.part(lambda q, hx=hx: q.circle(hx, 528, 22, SKIN), outline=6)
+    elif pose == 'throw_money':
+        for k, (bx, by, ang) in enumerate([(560, 120, 30), (420, 90, -20), (540, 260, 60), (380, 170, 10)]):
+            lay = p.layer()
+            lay.rect((bx - 30, by - 16, bx + 30, by + 16), CASH, CASH_DK, 4, r=3)
+            lay.circle(bx, by, 8, None, CASH_DK, 3)
+            p.paste(lay, rotate=ang, center=(bx, by))
 
 
 def ben(pose='idle', mood='smile', scale=1, blink=False, talk=True):
@@ -292,6 +393,10 @@ def ben(pose='idle', mood='smile', scale=1, blink=False, talk=True):
             lambda q: (q.rect((268, 466, 332, 484), BADGE_STRIPE), q.circle(300, 512, 11, (200, 196, 190))),
             outline=4)
 
+    if pose == 'empty_pockets':                        # pockets turned inside out
+        for x, s in ((222, -1), (378, 1)):
+            sp.part(lambda q, x=x, s=s: q.poly([(x - 26, 600), (x + 26, 600), (x + 18 + s * 6, 652),
+                                                (x - 18 + s * 6, 652)], (246, 244, 236)), outline=5)
     over = _OVER_FACE.copy()
     L, R = ARMS[pose]
     if pose not in over:
@@ -313,6 +418,7 @@ def ben(pose='idle', mood='smile', scale=1, blink=False, talk=True):
     if pose in over:
         for arm in (L, R):
             _arm(sp, arm)
+    _pose_props(sp, pose)
     if pose == 'read':                                 # receipt held in both hands
         lay = p.layer()
         zig = [(232 + 136 * i / 8, 556 + (8 if i % 2 else 0)) for i in range(8, -1, -1)]

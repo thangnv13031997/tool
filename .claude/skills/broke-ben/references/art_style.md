@@ -24,11 +24,18 @@ Scripts write into the current working directory.
 - **Ben** (the channel avatar): young adult, about 3.5 heads tall, round friendly face, light blush, **messy modern
   hair**, green hoodie, **work ID badge on a blue lanyard** (no backpack), navy jeans, white sneakers.
   `ben(pose, mood, scale, blink, talk)`.
-  - Poses (15): idle, wave, point, hold_head, cross_arms, phone, read, count_money, shrug, think, celebrate,
-    thumbs_up, facepalm, explain, sad.
-  - Moods (6): smile, shock, sad, worried, angry, smug. `blink=True` closes the eyes; `talk=False` is the closed-mouth
-    frame for lip flaps. Reference sheet: `docs/ben_poses.png` in the broke-ben repo.
+  - Poses (25): idle, wave, point, hold_head, cross_arms, phone, read, count_money, shrug, think, celebrate,
+    thumbs_up, facepalm, explain, sad, sit_desk, empty_pockets, credit_card, shopping_bags, coffee, calculator,
+    beg, throw_money, hug_piggy, present.
+  - Moods (9): smile, shock, sad, worried, angry, smug, money_eyes, tired, cry. `blink=True` closes the eyes;
+    `talk=False` is the closed-mouth frame for lip flaps. Reference sheet: `docs/ben_poses.png` in the broke-ben repo.
 - **Piggy Ben** (sidekick): pink piggy bank, coin slot, crack with a band-aid. Moods smile, shock.
+
+## Ben's Notebook (hand-drawn segments)
+`app/sketch.py` in the repo: show type `sketch` (kinds line, bars, pie, flow). On a `notebook` background the scene
+opens with a page flip; a hand holding a red marker draws the chart stroke by stroke (axes, data, fills), then
+writes labels in the Patrick Hand font (SIL OFL, supports Vietnamese). Lines get a small deterministic wobble.
+Sounds `page` and `scribble` are added automatically. Use for ~20% of scenes, mainly to explain concepts.
 
 ## Animation approach (cut-out, not skeletal)
 Sprites are drawn once and cached; motion comes from: breathing (±1.2% squash/stretch), blinks (4 frames),

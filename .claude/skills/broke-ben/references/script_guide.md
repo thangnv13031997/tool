@@ -82,5 +82,10 @@ Minimal shape:
              "lines": [{"text": "Ben makes three thousand dollars a month.", "vi": "Ben kiếm 3.000 đô mỗi tháng."}]}]}
 ```
 Backgrounds: grid, room, desk, city, notebook, plain. Show types: money_card, big_text, invest_chart, chart, receipt,
-phone, compare, list, coin_drop. Ben poses: idle, wave, point; moods: smile, shock. Piggy moods: smile, shock.
-SFX: pop, coin, ding, whoosh, tick, thud, cash. Anything else = "needs new asset" (note it for the tool upgrade).
+phone, compare, list, coin_drop, sketch (Ben's Notebook hand drawing; kind line | bars | pie | flow; use with
+bg notebook for the page flip, ~20% of scenes). Ben poses (25): idle, wave, point, hold_head, cross_arms, phone, read,
+count_money, shrug, think, celebrate, thumbs_up, facepalm, explain, sad, sit_desk, empty_pockets, credit_card,
+shopping_bags, coffee, calculator, beg, throw_money, hug_piggy, present. Ben moods (9): smile, shock, sad, worried,
+angry, smug, money_eyes, tired, cry. Piggy moods: smile, shock.
+SFX: pop, coin, ding, whoosh, tick, thud, cash, page, scribble. Anything else = "needs new asset" (note it for the
+tool upgrade).
