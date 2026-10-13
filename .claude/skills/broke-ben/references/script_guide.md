@@ -66,14 +66,21 @@ This video is for educational and entertainment purposes only and is not financi
 Also give: 10–15 tags, a pinned comment that asks a question ("What's YOUR biggest money leak?"), and the
 next-video tease.
 
-## Script deliverable format (until Money Studio's JSON format exists)
-Return a scene table the tool can later convert:
-
-| # | Purpose | Narration (TTS-ready) | On screen | Ben / Piggy | Duration |
-|---|---|---|---|---|---|
-| 1 | hook | "Ben makes three thousand dollars a month." | money card $3,000 pops in | Ben idle, talking | 4 s |
-
-Purposes: hook, promise, setup, open_loop, beat, rehook, payoff, action, outro.
-On-screen elements available today: money card (count up/down), line chart (one or two series, labelled ends),
-receipt (prints line by line), phone balance, coins, captions. Ben poses: idle, wave, point; moods: smile,
-shock. Piggy Ben moods: smile, shock. Anything else must be listed as "needs new asset" in the table.
+## Script deliverable format (Money Studio JSON)
+Return ONE JSON object in the Money Studio format (full spec: `docs/PROMPT_FOR_CLAUDE.md` in the broke-ben repo).
+Every line carries `text` (English narration, numbers as words) and `vi` (natural Vietnamese subtitle).
+Minimal shape:
+```json
+{"title": "...", "mascot": "ben", "narrator": {"voice": "am_michael", "speed": 1.0}, "music": "light",
+ "youtube": {"title_options": [], "title_vi": "", "description": "", "description_vi": "", "numbers": "", "tags": [],
+             "pinned_comment": ""},
+ "thumbnail": {"variants": [{"layout": "face_number", "text": "ALWAYS *BROKE*?", "number": "$0.00", "who": "ben", "mood": "shock"}]},
+ "shorts": {"scenes": [1, 6], "hook_text": "...", "end_text": "Full video on Broke Ben"},
+ "scenes": [{"purpose": "hook", "chapter": "...", "bg": "grid",
+             "chars": [{"who": "ben", "pose": "idle", "mood": "smile"}],
+             "show": {"type": "money_card", "label": "Monthly pay", "value": 3000, "to": 33},
+             "lines": [{"text": "Ben makes three thousand dollars a month.", "vi": "Ben kiếm 3.000 đô mỗi tháng."}]}]}
+```
+Backgrounds: grid, room, desk, city, notebook, plain. Show types: money_card, big_text, invest_chart, chart, receipt,
+phone, compare, list, coin_drop. Ben poses: idle, wave, point; moods: smile, shock. Piggy moods: smile, shock.
+SFX: pop, coin, ding, whoosh, tick, thud, cash. Anything else = "needs new asset" (note it for the tool upgrade).

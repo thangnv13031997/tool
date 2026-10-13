@@ -48,12 +48,15 @@ python <skill>/scripts/demo_animation.py       # video thử 9 giây -> ./demo/
 Sau khi dựng bất kỳ hình nào, mở ảnh ra xem và sửa chỗ chồng chữ, lệch khung trước khi giao.
 Dùng bảng màu và font ở trên; không tự đổi phong cách nhân vật nếu người làm kênh không yêu cầu.
 
-**Làm tool Money Studio** (chưa có) → lấy `scripts/charkit.py` và `scripts/flatkit.py` làm lõi vẽ.
-Theo cách làm của các tool kênh khác của người dùng (Horror Studio, Relatable Studio): app Windows ở `E:\MoneyStudio`,
-giọng Kokoro trong `E:\LocalTTS`, kịch bản JSON do Claude viết, xuất video 1080p + Shorts + 3 thumbnail + youtube.txt
-+ phụ đề .srt. Hoạt hình theo kiểu cắt giấy (đổi trạng thái nhân vật, co giãn, nảy) như `demo_animation.py`,
-cộng đoạn "Ben's Notebook" tay vẽ chiếm khoảng 20% thời lượng. Khi tool có định dạng JSON, cập nhật phần
-"Script deliverable format" trong `references/script_guide.md` cho khớp.
+**Tool Money Studio** (repo GitHub `thangnv13031997/broke-ben`, trên máy người dùng ở `E:\MoneyStudio`):
+app Windows (Tkinter) dùng giọng Kokoro có sẵn ở `E:\LocalTTS\env_en` qua `app/tts_worker.py`, giống Horror Studio.
+Xuất video 1080p + Shorts + 3 thumbnail + `youtube.txt` + phụ đề `subtitles_en.srt` / `subtitles_vi.srt`; có nút chọn
+phụ đề trên video: tiếng Anh (bản đăng), tiếng Việt (bản để người làm kênh xem duyệt) hoặc không.
+- **Kịch bản cho tool** = một object JSON đúng định dạng trong `docs/PROMPT_FOR_CLAUDE.md` của repo (bản sao trong
+  `references/script_guide.md`, mục "Script deliverable format"). **Mỗi câu có `text` (tiếng Anh) và `vi` (tiếng Việt)**,
+  cộng `youtube.title_vi` / `description_vi`, vì người làm kênh đọc tiếng Anh chưa tốt.
+- Nâng cấp tool: đọc `notes/IMPROVEMENTS.md` trong repo; lõi vẽ là `app/engine/charkit.py` + `app/scene.py` + `app/elements.py`.
+  Thử nhanh không cần Kokoro: `python app/render.py scripts/ep00_trailer.json --test --subs vi`.
 
 ## Giới hạn nội dung
 - Chỉ giải thích khái niệm; không khuyên mua/bán cổ phiếu hay tiền ảo cụ thể, không hứa thu nhập, không "làm giàu nhanh".
